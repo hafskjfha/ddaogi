@@ -1,0 +1,721 @@
+[
+    {
+        "rank": "1",
+        "nickname": "platter",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "56"
+        ],
+        "total_score": "856",
+        "performance": "2841",
+        "rating":2142
+    },
+    {
+        "rank": "2",
+        "nickname": "paracompact",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "56"
+        ],
+        "total_score": "856",
+        "performance": "2714",
+        "rating":2124
+    },
+    {
+        "rank": "3",
+        "nickname": "jkrt",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "48",
+            "38"
+        ],
+        "total_score": "786",
+        "performance": "2643",
+        "rating":2221
+    },
+    {
+        "rank": "4",
+        "nickname": "dadasO8",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "7",
+            "56"
+        ],
+        "total_score": "763",
+        "performance": "2587",
+        "rating":2238
+    },
+    {
+        "rank": "5",
+        "nickname": "plast",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "56"
+        ],
+        "total_score": "756",
+        "performance": "2539",
+        "rating":2327
+    },
+    {
+        "rank": "6",
+        "nickname": "RreShi",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "5",
+            "100",
+            "100",
+            "38"
+        ],
+        "total_score": "743",
+        "performance": "2495",
+        "rating":1538
+    },
+    {
+        "rank": "7",
+        "nickname": "ThatOnePythonUser",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "38"
+        ],
+        "total_score": "738",
+        "performance": "2453",
+        "rating":1856
+    },
+    {
+        "rank": "8",
+        "nickname": "rich_chanel",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "18"
+        ],
+        "total_score": "718",
+        "performance": "2410",
+        "rating":1334
+    },
+    {
+        "rank": "9",
+        "nickname": "saduekook",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "0"
+        ],
+        "total_score": "700",
+        "performance": "2366",
+        "rating":1441
+    },
+    {
+        "rank": "10",
+        "nickname": "0base42",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "5",
+            "100",
+            "0",
+            "41"
+        ],
+        "total_score": "646",
+        "performance": "2322",
+        "rating":1219
+    },
+    {
+        "rank": "11",
+        "nickname": "hjs4221",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "42",
+            "0",
+            "0"
+        ],
+        "total_score": "642",
+        "performance": "2277",
+        "rating":2168
+    },
+    {
+        "rank": "12",
+        "nickname": "gaegulx",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "100",
+            "0",
+            "41"
+        ],
+        "total_score": "641",
+        "performance": "2229",
+        "rating":1478
+    },
+    {
+        "rank": "13",
+        "nickname": "cenix820",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "8",
+            "0",
+            "22"
+        ],
+        "total_score": "630",
+        "performance": "2178",
+        "rating":1638
+    },
+    {
+        "rank": "14",
+        "nickname": "parkky",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "5",
+            "100",
+            "0",
+            "18"
+        ],
+        "total_score": "623",
+        "performance": "2124",
+        "rating":1743
+    },
+    {
+        "rank": "15",
+        "nickname": "dnjsgudtjr11",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "8",
+            "0",
+            "0"
+        ],
+        "total_score": "608",
+        "performance": "2066",
+        "rating":1506
+    },
+    {
+        "rank": "16",
+        "nickname": "nodoka",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "600",
+        "performance": "2008",
+        "rating":1856
+    },
+    {
+        "rank": "17",
+        "nickname": "flakepym",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "47",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "547",
+        "performance": "-",
+        "rating":1200
+    },
+    {
+        "rank": "18",
+        "nickname": "coxld",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "50",
+            "60",
+            "8",
+            "0",
+            "15"
+        ],
+        "total_score": "533",
+        "performance": "1952",
+        "rating":1452
+    },
+    {
+        "rank": "19",
+        "nickname": "sxonz",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "8",
+            "0",
+            "0"
+        ],
+        "total_score": "508",
+        "performance": "1900",
+        "rating":1475
+    },
+    {
+        "rank": "20",
+        "nickname": "kdy40929",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "500",
+        "performance": "1852",
+        "rating":2045
+    },
+    {
+        "rank": "21",
+        "nickname": "slow09",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "500",
+        "performance": "1809",
+        "rating":1774
+    },
+    {
+        "rank": "22",
+        "nickname": "limho0305",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "100",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "500",
+        "performance": "1771",
+        "rating":1296
+    },
+    {
+        "rank": "23",
+        "nickname": "ysyh0808",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "400",
+        "performance": "1735",
+        "rating":1366
+    },
+    {
+        "rank": "24",
+        "nickname": "serotonin_4u",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "400",
+        "performance": "1702"
+    },
+    {
+        "rank": "25",
+        "nickname": "one6491",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "400",
+        "performance": "1671",
+        "rating":1200
+    },
+    {
+        "rank": "26",
+        "nickname": "s6xybr8in",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "400",
+        "performance": "1641",
+        "rating":1256
+    },
+    {
+        "rank": "27",
+        "nickname": "gmb9817",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "400",
+        "performance": "1614",
+        "rating":1330
+    },
+    {
+        "rank": "28",
+        "nickname": "jtw7913",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "34",
+            "0",
+            "0",
+            "8",
+            "0",
+            "0"
+        ],
+        "total_score": "342",
+        "performance": "1587",
+        "rating":1376
+    },
+    {
+        "rank": "29",
+        "nickname": "ymkzz123",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "300",
+        "performance": "1561",
+        "rating":1200
+    },
+    {
+        "rank": "30",
+        "nickname": "hampitch",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "300",
+        "performance": "1536",
+        "rating":1326
+    },
+    {
+        "rank": "31",
+        "nickname": "lib5542",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "300",
+        "performance": "1512",
+        "rating":1200
+    },
+    {
+        "rank": "32",
+        "nickname": "Pigjunyung",
+        "problem_scores": [
+            "100",
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "300",
+        "performance": "1488",
+        "rating":1260
+    },
+    {
+        "rank": "33",
+        "nickname": "ehdghk88",
+        "problem_scores": [
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "200",
+        "performance": "1465",
+        "rating":1262
+    },
+    {
+        "rank": "34",
+        "nickname": "sqroodriver",
+        "problem_scores": [
+            "100",
+            "100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "200",
+        "performance": "-",
+        "rating":1200
+    },
+    {
+        "rank": "35",
+        "nickname": "sinokadev",
+        "problem_scores": [
+            "100",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "100",
+        "performance": "1442",
+        "rating":1200
+    },
+    {
+        "rank": "36",
+        "nickname": "dadas08",
+        "problem_scores": [
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "0",
+        "performance": "1408",
+        "rating":1432
+    },
+    {
+        "rank": "36",
+        "nickname": "Admin",
+        "problem_scores": [
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "0",
+        "performance": "-",
+        "rating":2021
+    },
+    {
+        "rank": "36",
+        "nickname": "dyppp",
+        "problem_scores": [
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "0",
+        "performance": "-",
+        "rating":1534
+    },
+    {
+        "rank": "36",
+        "nickname": "Uyuni",
+        "problem_scores": [
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "0",
+        "performance": "1408",
+        "rating":1200
+    },
+    {
+        "rank": "36",
+        "nickname": "jhwest2",
+        "problem_scores": [
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+        ],
+        "total_score": "0",
+        "performance": "-",
+        "rating":1571
+    }
+]

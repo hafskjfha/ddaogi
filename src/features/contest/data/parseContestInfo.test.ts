@@ -55,4 +55,24 @@ describe("parseContestInfo", () => {
   ])("rejects %s with a source-naming error", (_case, invalidMarkdown) => {
     expect(() => parseContestInfo(invalidMarkdown)).toThrow(/contest_info\.md/);
   });
+
+  it.each([
+    [
+      "reordered A through I indices",
+      markdown
+        .replace("### A,", "### TEMP,")
+        .replace("### B,", "### A,")
+        .replace("### TEMP,", "### B,"),
+    ],
+    ["A through H followed by J", markdown.replace("### I,", "### J,")],
+    [
+      "an extra tenth problem",
+      `${markdown}\n### J, Extra\n- 난이도: B1\n- FF: -\n`,
+    ],
+    ["a missing middle index", markdown.replace(/### D,[\s\S]*?(?=### E,)/, "")],
+  ])("rejects %s", (_case, invalidMarkdown) => {
+    expect(() => parseContestInfo(invalidMarkdown)).toThrow(
+      /contest_info\.md: expected problem indices A, B, C, D, E, F, G, H, I in order/,
+    );
+  });
 });

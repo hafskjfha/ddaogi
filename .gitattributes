@@ -1,0 +1,2 @@
+data/contest_info.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+data/contest_score_board.json -text

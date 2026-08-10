@@ -18,7 +18,13 @@ export async function loadContestDashboard(
     readFile(resolve(process.cwd(), "data/contest_info.md"), "utf8"),
     readFile(resolve(process.cwd(), "data/contest_score_board.json"), "utf8"),
   ]);
-  const scoreboardInput: unknown = JSON.parse(scoreboardText);
+  const contestInfo = parseContestInfo(markdown);
 
-  return buildContestDashboard(parseContestInfo(markdown), scoreboardInput);
+  try {
+    const scoreboardInput: unknown = JSON.parse(scoreboardText);
+    return buildContestDashboard(contestInfo, scoreboardInput);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Invalid contest_score_board.json: ${message}`, { cause: error });
+  }
 }

@@ -33,14 +33,23 @@ const TIER_LEVELS = {
   "5": "V",
 } as const;
 
+const EXPECTED_PROBLEM_INDICES = ["A", "B", "C", "D", "E", "F", "G", "H", "I"] as const;
+
 /** Parses DOJ Beginner Contest 4's stable mock Markdown schema. */
 export function parseContestInfo(markdown: string): ParsedContestInfo {
   const lines = markdown.split(/\r?\n/);
   const contest = parseContestSummary(lines);
   const problems = parseProblems(lines);
 
-  if (problems.length < 9) {
-    throw invalidContestInfo(`expected at least nine problems, found ${problems.length}`);
+  if (
+    problems.length !== EXPECTED_PROBLEM_INDICES.length ||
+    problems.some((problem, index) => problem.index !== EXPECTED_PROBLEM_INDICES[index])
+  ) {
+    throw invalidContestInfo(
+      `expected problem indices ${EXPECTED_PROBLEM_INDICES.join(", ")} in order; found ${problems
+        .map((problem) => problem.index)
+        .join(", ")}`,
+    );
   }
 
   return { contest, problems };
