@@ -76,7 +76,8 @@ export function DifficultyDistribution({
           </div>
           <ul aria-label={legendLabel} className="w-full space-y-2 text-sm">
             {items.map((item) => {
-              const fullySolved = item.totalAvailable !== null && item.count === item.totalAvailable;
+              const fullySolved =
+                item.totalAvailable !== null && item.totalAvailable > 0 && item.count === item.totalAvailable;
               return (
                 <li key={item.key} className="flex items-center justify-between gap-3">
                   <span className="flex min-w-0 items-center gap-2">

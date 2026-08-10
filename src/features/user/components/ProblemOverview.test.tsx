@@ -162,6 +162,7 @@ describe("ProblemOverview", () => {
     );
     expect(groupLegend).toHaveTextContent("1개 (100%)");
     expect(screen.queryByLabelText("Bronze 전체 해결")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Unrated 전체 해결")).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "자세히 보기" }));
     const detailLegend = screen.getByRole("list", { name: "난이도 상세 분포" });
