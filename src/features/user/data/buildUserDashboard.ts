@@ -70,7 +70,6 @@ export function buildUserDashboard(
   const ratingHistory = buildRatingHistory(user);
   const titleBand = getRatingBand(user.profile.currentRating);
   const solvedProblems = problems.filter((problem) => problem.solved);
-  const availableProblemTiers = buildAvailableProblemTiers(problems, difficulties);
 
   return {
     profile: {
@@ -88,8 +87,8 @@ export function buildUserDashboard(
     },
     problems,
     problemSolveStreak: buildProblemSolveStreak(problems, user),
-    difficultyGroups: buildDifficultyGroupDistribution(solvedProblems, availableProblemTiers),
-    difficultyDetails: buildDifficultyDetailDistribution(solvedProblems, availableProblemTiers),
+    difficultyGroups: buildDifficultyGroupDistribution(solvedProblems),
+    difficultyDetails: buildDifficultyDetailDistribution(solvedProblems),
     languages: buildLanguageDistribution(problems),
     totalSubmissions: problems.reduce((total, problem) => total + problem.submissions.length, 0),
   };
@@ -275,10 +274,8 @@ function buildProblemSolveStreak(
 
 function buildDifficultyGroupDistribution(
   solvedProblems: readonly ProblemSummary[],
-  availableProblemTiers: readonly ProblemTier[],
 ): readonly DistributionItem[] {
   const solvedCounts = countBy(solvedProblems.map((problem) => problem.tier.group));
-  const availableCounts = countBy(availableProblemTiers.map((tier) => tier.group));
 
   return TIER_GROUP_ORDER.map((group) => {
     const tier = parseProblemTier(group === "Unrated" ? undefined : `${group} V`);
@@ -291,18 +288,16 @@ function buildDifficultyGroupDistribution(
       count,
       percentage: percentage(count, solvedProblems.length),
       color: tier.color,
-      totalAvailable: availableCounts.get(group) ?? 0,
+      totalAvailable: null,
     };
   });
 }
 
 function buildDifficultyDetailDistribution(
   solvedProblems: readonly ProblemSummary[],
-  availableProblemTiers: readonly ProblemTier[],
 ): readonly DistributionItem[] {
   const tierOrder = buildTierOrder();
   const solvedCounts = countBy(solvedProblems.map((problem) => problem.tier.label));
-  const availableCounts = countBy(availableProblemTiers.map((tier) => tier.label));
 
   return tierOrder.map((tier) => {
     const count = solvedCounts.get(tier.label) ?? 0;
@@ -314,24 +309,9 @@ function buildDifficultyDetailDistribution(
       count,
       percentage: percentage(count, solvedProblems.length),
       color: tier.color,
-      totalAvailable: availableCounts.get(tier.label) ?? 0,
+      totalAvailable: null,
     };
   });
-}
-
-function buildAvailableProblemTiers(
-  problems: readonly ProblemSummary[],
-  difficulties: ReadonlyMap<string, string>,
-): readonly ProblemTier[] {
-  const tiers = [...difficulties.values()].map((difficulty) => parseProblemTier(difficulty));
-
-  for (const problem of problems) {
-    if (!difficulties.has(problem.id)) {
-      tiers.push(problem.tier);
-    }
-  }
-
-  return tiers;
 }
 
 function buildTierOrder(): readonly ProblemTier[] {

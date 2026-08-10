@@ -20,6 +20,21 @@ describe("buildUserDashboard", () => {
     expect(dashboard.ratingHistory.at(-1)?.ratingAfter).toBe(1429);
   });
 
+  it("does not invent difficulty availability totals from attempted problems", () => {
+    const dashboard = buildUserDashboard("jtw7913", user, results, difficulties);
+
+    expect(dashboard.difficultyGroups.every((item) => item.totalAvailable === null)).toBe(true);
+    expect(dashboard.difficultyGroups).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ key: "Bronze", count: 35, totalAvailable: null }),
+        expect.objectContaining({ key: "Silver", count: 44, totalAvailable: null }),
+        expect.objectContaining({ key: "Gold", count: 9, totalAvailable: null }),
+        expect.objectContaining({ key: "Platinum", count: 1, totalAvailable: null }),
+      ]),
+    );
+    expect(dashboard.difficultyDetails.every((item) => item.totalAvailable === null)).toBe(true);
+  });
+
   it("normalizes submissions and uses Unrated when a difficulty is missing", () => {
     const dashboard = buildUserDashboard(
       "jtw7913",
@@ -79,12 +94,12 @@ describe("buildUserDashboard", () => {
     expect(dashboard.difficultyGroups[0]).toMatchObject({
       key: "Unrated",
       count: 1,
-      totalAvailable: 1,
+      totalAvailable: null,
     });
     expect(dashboard.difficultyDetails[0]).toMatchObject({
       key: "Unrated",
       count: 1,
-      totalAvailable: 1,
+      totalAvailable: null,
     });
   });
 
