@@ -19,27 +19,33 @@ export function ContestHero({ contest }: { contest: ContestSummary }) {
               <Badge variant="outline">대회 분석</Badge>
               <ParticipationTypeTooltip participationType={contest.participationType} />
             </div>
-            <h1 id="contest-title" className="text-3xl font-black tracking-tight sm:text-4xl">
+            <h1
+              id="contest-title"
+              className="min-w-0 break-words text-3xl font-black tracking-tight sm:text-4xl"
+            >
               {contest.title}
             </h1>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-              문제 정렬 · <span className="font-semibold text-slate-950 dark:text-slate-50">{contest.problemOrder}</span>
+              문제 정렬 ·{" "}
+              <span className="min-w-0 break-words font-semibold text-slate-950 dark:text-slate-50">
+                {contest.problemOrder}
+              </span>
             </p>
           </div>
 
-          <dl className="grid shrink-0 grid-cols-2 gap-3 text-sm sm:min-w-72">
-            <div className="rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
+          <dl className="grid min-w-0 grid-cols-2 gap-3 text-sm sm:min-w-72 lg:w-72 lg:shrink-0">
+            <div className="min-w-0 rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-slate-600 dark:text-slate-400">Director</dt>
-              <dd className="mt-1 font-semibold">{contest.director}</dd>
+              <dd className="mt-1 min-w-0 break-words font-semibold">{contest.director}</dd>
             </div>
-            <div className="rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
+            <div className="min-w-0 rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-slate-600 dark:text-slate-400">Setter</dt>
-              <dd className="mt-1 font-semibold">{contest.setter}</dd>
+              <dd className="mt-1 min-w-0 break-words font-semibold">{contest.setter}</dd>
             </div>
           </dl>
         </div>
 
-        <dl className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <dl className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div className="flex min-w-0 gap-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800">
             <CalendarDays
               aria-hidden="true"
@@ -49,26 +55,26 @@ export function ContestHero({ contest }: { contest: ContestSummary }) {
               <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 일정
               </dt>
-              <dd className="mt-1 space-y-0.5 text-sm font-medium">
-                <time dateTime={contest.startAt} className="block">
+              <dd className="mt-1 min-w-0 space-y-0.5 break-words text-sm font-medium">
+                <time dateTime={contest.startAt} className="block min-w-0 break-words">
                   {contest.startLabel}
                 </time>
                 <span aria-hidden="true" className="block text-slate-400 dark:text-slate-500">
                   ↓
                 </span>
-                <time dateTime={contest.endAt} className="block">
+                <time dateTime={contest.endAt} className="block min-w-0 break-words">
                   {contest.endLabel}
                 </time>
               </dd>
             </div>
           </div>
 
-          <div className="flex gap-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800">
+          <div className="flex min-w-0 gap-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800">
             <Clock3
               aria-hidden="true"
               className="mt-0.5 size-5 shrink-0 text-blue-600 dark:text-blue-400"
             />
-            <div>
+            <div className="min-w-0">
               <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 응시 시간
               </dt>
@@ -76,12 +82,12 @@ export function ContestHero({ contest }: { contest: ContestSummary }) {
             </div>
           </div>
 
-          <div className="flex gap-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800">
+          <div className="flex min-w-0 gap-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800">
             <Gauge
               aria-hidden="true"
               className="mt-0.5 size-5 shrink-0 text-blue-600 dark:text-blue-400"
             />
-            <div>
+            <div className="min-w-0">
               <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Rated 범위
               </dt>
@@ -89,16 +95,16 @@ export function ContestHero({ contest }: { contest: ContestSummary }) {
             </div>
           </div>
 
-          <div className="flex gap-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800">
+          <div className="flex min-w-0 gap-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800">
             <Users
               aria-hidden="true"
               className="mt-0.5 size-5 shrink-0 text-blue-600 dark:text-blue-400"
             />
-            <div>
+            <div className="min-w-0">
               <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 운영진
               </dt>
-              <dd className="mt-1 text-sm font-medium">
+              <dd className="mt-1 min-w-0 break-words text-sm font-medium">
                 {contest.director} · {contest.setter}
               </dd>
             </div>
