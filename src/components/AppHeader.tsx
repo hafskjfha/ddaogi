@@ -1,7 +1,7 @@
 import { Bird } from "lucide-react";
 import Link from "next/link";
 
-/** Persistent navigation for supported analytics and planned destinations. */
+/** Persistent navigation for the supported user and contest analytics. */
 export function AppHeader() {
   return (
     <header className="border-b border-slate-200 bg-white/90 text-slate-950 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-50">
@@ -15,18 +15,14 @@ export function AppHeader() {
             <span className="hidden sm:inline">유저 분석</span>
             <span className="sm:hidden">유저</span>
           </Link>
-          <span
-            role="link"
-            aria-disabled="true"
-            aria-label="대회 분석 준비 중"
-            className="flex cursor-not-allowed items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-slate-400 dark:text-slate-600"
+          <Link
+            href="/contests/doj-beginner-contest-4"
+            aria-label="대회 분석"
+            className="rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-50 dark:focus-visible:ring-slate-300"
           >
             <span className="hidden sm:inline">대회 분석</span>
             <span className="sm:hidden">대회</span>
-            <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-slate-500 dark:bg-slate-800 dark:text-slate-400">
-              준비 중
-            </span>
-          </span>
+          </Link>
         </nav>
       </div>
     </header>
