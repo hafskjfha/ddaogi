@@ -2,7 +2,7 @@
 
 import { House, RotateCcw, TriangleAlert } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
@@ -13,7 +13,11 @@ interface UserDashboardErrorProps {
 
 /** Presents recoverable actions when the user dashboard route fails. */
 export default function UserDashboardError({ error, retry }: UserDashboardErrorProps) {
+  const loggedErrorRef = useRef<Error | null>(null);
+
   useEffect(() => {
+    if (loggedErrorRef.current === error) return;
+    loggedErrorRef.current = error;
     console.error(error);
   }, [error]);
 
