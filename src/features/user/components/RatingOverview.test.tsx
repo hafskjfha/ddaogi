@@ -1,10 +1,62 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { RatingOverview } from "@/features/user/components/RatingOverview";
 import { userDashboardFixture } from "@/test/fixtures/userDashboard";
 
+const SharedResizeObserver = globalThis.ResizeObserver;
+
+class ChartResizeObserver implements ResizeObserver {
+  constructor(private readonly callback: ResizeObserverCallback) {}
+
+  disconnect(): void {}
+  observe(target: Element): void {
+    this.callback(
+      [
+        {
+          target,
+          contentRect: {
+            x: 0,
+            y: 0,
+            width: 800,
+            height: 320,
+            top: 0,
+            right: 800,
+            bottom: 320,
+            left: 0,
+            toJSON: () => ({}),
+          },
+          borderBoxSize: [],
+          contentBoxSize: [],
+          devicePixelContentBoxSize: [],
+        },
+      ],
+      this,
+    );
+  }
+  unobserve(): void {}
+}
+
+describe("shared ResizeObserver test setup", () => {
+  it("does not fabricate dimensions outside responsive chart tests", () => {
+    const callback = vi.fn<ResizeObserverCallback>();
+    const observer = new ResizeObserver(callback);
+
+    observer.observe(document.createElement("div"));
+
+    expect(callback).not.toHaveBeenCalled();
+  });
+});
+
 describe("RatingOverview", () => {
+  beforeAll(() => {
+    globalThis.ResizeObserver = ChartResizeObserver;
+  });
+
+  afterAll(() => {
+    globalThis.ResizeObserver = SharedResizeObserver;
+  });
+
   it("switches rating series and exposes all rating fields", async () => {
     const user = userEvent.setup();
     render(<RatingOverview dashboard={userDashboardFixture} />);
