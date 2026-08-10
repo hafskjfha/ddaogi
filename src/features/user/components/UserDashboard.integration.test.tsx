@@ -54,14 +54,19 @@ describe("user dashboard composition", () => {
   });
 
   it("keeps the Korean not-found recovery path available", () => {
-    render(<NotFound />);
+    const { container } = render(<NotFound />);
 
     expect(
       screen.getByRole("heading", { name: "페이지를 찾을 수 없습니다." }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "지원 유저 보기" })).toHaveAttribute(
+    expect(
+      container.querySelector('a[href="/contests/doj-beginner-contest-4"]'),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "유저 분석 보기" })).toHaveAttribute(
       "href",
       "/users/jtw7913",
     );
+    expect(screen.getByRole("link", { name: "홈으로" })).toHaveAttribute("href", "/");
+    expect(screen.queryByRole("link", { name: "지원 대회 보기" })).not.toBeInTheDocument();
   });
 });
