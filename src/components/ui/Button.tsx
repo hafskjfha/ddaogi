@@ -26,6 +26,7 @@ const buttonVariants = cva(
 
 export type ButtonProps = ComponentProps<"button"> & VariantProps<typeof buttonVariants>;
 
+/** Styled button with semantic variants and sizes for interactive actions. */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, type = "button", ...props }, ref) => (
     <button

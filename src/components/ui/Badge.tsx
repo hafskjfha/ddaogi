@@ -20,6 +20,7 @@ const badgeVariants = cva(
 
 export type BadgeProps = ComponentProps<"span"> & VariantProps<typeof badgeVariants>;
 
+/** Compact label for a status, category, or secondary attribute. */
 export function Badge({ className, variant, ...props }: BadgeProps) {
   return <span className={cn(badgeVariants({ variant }), className)} {...props} />;
 }

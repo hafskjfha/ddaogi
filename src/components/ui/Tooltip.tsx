@@ -2,10 +2,14 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { forwardRef, type ComponentPropsWithoutRef, type ComponentRef } from "react";
 import { cn } from "@/lib/cn";
 
+/** Radix tooltip root that coordinates its trigger and content. */
 export const Tooltip = TooltipPrimitive.Root;
+/** Radix control that reveals its associated tooltip. */
 export const TooltipTrigger = TooltipPrimitive.Trigger;
+/** Radix provider that configures tooltip behavior for descendants. */
 export const TooltipProvider = TooltipPrimitive.Provider;
 
+/** Styled Radix overlay that presents concise contextual help. */
 export const TooltipContent = forwardRef<
   ComponentRef<typeof TooltipPrimitive.Content>,
   ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>

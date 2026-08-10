@@ -1,6 +1,7 @@
 import { Bird } from "lucide-react";
 import Link from "next/link";
 
+/** Persistent navigation for user and contest analytics pages. */
 export function AppHeader() {
   return (
     <header className="border-b border-slate-200 bg-white/90 text-slate-950 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-50">

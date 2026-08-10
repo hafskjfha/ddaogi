@@ -14,10 +14,12 @@ export function Card({ className, ...props }: ComponentProps<"section">) {
   );
 }
 
+/** Padded heading region for a card. */
 export function CardHeader({ className, ...props }: ComponentProps<"div">) {
   return <div className={cn("flex flex-col gap-1.5 p-6", className)} {...props} />;
 }
 
+/** Semantic title for the card's primary concept. */
 export function CardTitle({ className, ...props }: ComponentProps<"h3">) {
   return (
     <h3
@@ -27,10 +29,12 @@ export function CardTitle({ className, ...props }: ComponentProps<"h3">) {
   );
 }
 
+/** Supporting text that clarifies a card's primary concept. */
 export function CardDescription({ className, ...props }: ComponentProps<"p">) {
   return <p className={cn("text-sm text-slate-600 dark:text-slate-400", className)} {...props} />;
 }
 
+/** Padded body region for a card's main content. */
 export function CardContent({ className, ...props }: ComponentProps<"div">) {
   return <div className={cn("p-6 pt-0", className)} {...props} />;
 }

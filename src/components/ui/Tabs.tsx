@@ -2,8 +2,10 @@ import * as TabsPrimitive from "@radix-ui/react-tabs";
 import { forwardRef, type ComponentPropsWithoutRef, type ComponentRef } from "react";
 import { cn } from "@/lib/cn";
 
+/** Radix tab root that coordinates a tabbed section. */
 export const Tabs = TabsPrimitive.Root;
 
+/** Styled Radix container for related tab triggers. */
 export const TabsList = forwardRef<
   ComponentRef<typeof TabsPrimitive.List>,
   ComponentPropsWithoutRef<typeof TabsPrimitive.List>
@@ -20,6 +22,7 @@ export const TabsList = forwardRef<
 
 TabsList.displayName = TabsPrimitive.List.displayName;
 
+/** Styled Radix control that selects its matching tab content. */
 export const TabsTrigger = forwardRef<
   ComponentRef<typeof TabsPrimitive.Trigger>,
   ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
@@ -36,6 +39,7 @@ export const TabsTrigger = forwardRef<
 
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
+/** Radix panel that displays content for the selected tab. */
 export const TabsContent = forwardRef<
   ComponentRef<typeof TabsPrimitive.Content>,
   ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
