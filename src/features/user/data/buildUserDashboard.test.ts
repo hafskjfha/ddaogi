@@ -1,0 +1,180 @@
+import difficulties from "../../../../data/difficulty.json";
+import results from "../../../../data/result.json";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, expect, it } from "vitest";
+import { buildUserDashboard } from "@/features/user/data/buildUserDashboard";
+import { parseUserInfo } from "@/features/user/data/parseUserInfo";
+
+const markdown = readFileSync(resolve(process.cwd(), "data/user_info.md"), "utf8");
+const user = parseUserInfo(markdown);
+
+describe("buildUserDashboard", () => {
+  it("derives all user analytics from the supplied mock files", () => {
+    const dashboard = buildUserDashboard("jtw7913", user, results, difficulties);
+
+    expect(dashboard.profile.solvedCount).toBe(90);
+    expect(dashboard.problems.filter((problem) => !problem.solved)).toHaveLength(5);
+    expect(dashboard.totalSubmissions).toBe(215);
+    expect(dashboard.languages.map((item) => item.count).reduce((a, b) => a + b, 0)).toBe(215);
+    expect(dashboard.ratingHistory.at(-1)?.ratingAfter).toBe(1429);
+  });
+
+  it("normalizes submissions and uses Unrated when a difficulty is missing", () => {
+    const dashboard = buildUserDashboard(
+      "jtw7913",
+      user,
+      {
+        "999": [
+          {
+            p_title: "Boundary Problem",
+            p_maxscore: 100,
+            submmit_lang: "cpp20",
+            submmit_at: "2026-01-03T12:00:00.000Z",
+            submmit_score: 100,
+          },
+          {
+            p_title: "Boundary Problem",
+            p_maxscore: 100,
+            submmit_lang: "pypy3",
+            submmit_at: "2026-01-02T12:00:00.000Z",
+            submmit_score: 100,
+          },
+        ],
+      },
+      {},
+    );
+
+    expect(dashboard.problems).toEqual([
+      {
+        id: "999",
+        title: "Boundary Problem",
+        tier: {
+          group: "Unrated",
+          level: null,
+          label: "Unrated",
+          shortLabel: "U",
+          color: "#64748b",
+        },
+        bestScore: 100,
+        maxScore: 100,
+        solved: true,
+        firstFullDate: "2026-01-02",
+        submissions: [
+          {
+            language: "pypy3",
+            submittedAt: "2026-01-02T12:00:00.000Z",
+            score: 100,
+            maxScore: 100,
+          },
+          {
+            language: "cpp20",
+            submittedAt: "2026-01-03T12:00:00.000Z",
+            score: 100,
+            maxScore: 100,
+          },
+        ],
+      },
+    ]);
+    expect(dashboard.difficultyGroups[0]).toMatchObject({
+      key: "Unrated",
+      count: 1,
+      totalAvailable: 1,
+    });
+    expect(dashboard.difficultyDetails[0]).toMatchObject({
+      key: "Unrated",
+      count: 1,
+      totalAvailable: 1,
+    });
+  });
+
+  it("accepts an evolving problem maximum and records the earliest contemporaneous full score", () => {
+    const dashboard = buildUserDashboard(
+      "jtw7913",
+      user,
+      {
+        "97": [
+          {
+            p_title: "Evolving Maximum",
+            p_maxscore: 4,
+            submmit_lang: "custom-json",
+            submmit_at: "2026-06-07T14:32:57.354Z",
+            submmit_score: 4,
+          },
+          {
+            p_title: "Evolving Maximum",
+            p_maxscore: 1,
+            submmit_lang: "custom-json",
+            submmit_at: "2026-06-07T14:25:57.933Z",
+            submmit_score: 1,
+          },
+        ],
+      },
+      { "97": "Unrated" },
+    );
+
+    expect(dashboard.problems[0]).toMatchObject({
+      bestScore: 4,
+      maxScore: 4,
+      solved: true,
+      firstFullDate: "2026-06-07",
+    });
+  });
+
+  it("rejects malformed result and difficulty records at the unknown boundary", () => {
+    const malformedSubmission = {
+      "1": [
+        {
+          p_title: "Broken",
+          p_maxscore: 100,
+          submmit_lang: "cpp20",
+          submmit_at: "not-a-date",
+          submmit_score: 100,
+        },
+      ],
+    };
+
+    expect(() => buildUserDashboard("jtw7913", user, malformedSubmission, {})).toThrow(
+      /submission/i,
+    );
+    expect(() => buildUserDashboard("jtw7913", user, {}, { "1": 42 })).toThrow(/difficulty/i);
+  });
+
+  it("rejects a score above its contemporaneous maximum", () => {
+    const invalidScore = {
+      "1": [
+        {
+          p_title: "Broken Score",
+          p_maxscore: 100,
+          submmit_lang: "cpp20",
+          submmit_at: "2026-01-01T00:00:00.000Z",
+          submmit_score: 101,
+        },
+      ],
+    };
+
+    expect(() => buildUserDashboard("jtw7913", user, invalidScore, {})).toThrow(/submission/i);
+  });
+
+  it("rejects an impossible ISO submission date", () => {
+    const impossibleDate = {
+      "1": [
+        {
+          p_title: "Broken Date",
+          p_maxscore: 100,
+          submmit_lang: "cpp20",
+          submmit_at: "2026-02-30T00:00:00.000Z",
+          submmit_score: 100,
+        },
+      ],
+    };
+
+    expect(() => buildUserDashboard("jtw7913", user, impossibleDate, {})).toThrow(/submission/i);
+  });
+
+  it("rejects a present difficulty that is not a supported tier", () => {
+    expect(() => buildUserDashboard("jtw7913", user, {}, { "1": "Legendary I" })).toThrow(
+      /difficulty/i,
+    );
+  });
+});
