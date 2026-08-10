@@ -21,13 +21,16 @@ export function UserProfileHero({ profile }: { profile: UserProfile }) {
         <div
           role="img"
           aria-label={`${profile.handle} 프로필 이미지 대체 표시`}
-          className="-mt-12 grid size-24 place-items-center rounded-full border-4 border-white bg-slate-900 text-2xl font-black text-white dark:border-slate-950"
+          className="relative z-10 -mt-12 grid size-24 place-items-center rounded-full border-4 border-white bg-slate-900 text-2xl font-black text-white dark:border-slate-950"
         >
           {initials}
         </div>
         <div className="pt-1 lg:pt-5">
           <h1 className="text-3xl font-black tracking-tight">{profile.handle}</h1>
-          <p className="font-bold" style={{ color: profile.titleColor }}>
+          <p
+            className="border-s-4 ps-2 font-bold text-slate-950 dark:text-slate-50"
+            style={{ borderColor: profile.titleColor }}
+          >
             {profile.title}
           </p>
           <p className="text-slate-600 dark:text-slate-400">
@@ -36,13 +39,19 @@ export function UserProfileHero({ profile }: { profile: UserProfile }) {
           <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-sm text-slate-600 dark:text-slate-400">현재 레이팅</dt>
-              <dd className="font-bold" style={{ color: profile.titleColor }}>
+              <dd
+                className="border-s-2 ps-2 font-bold text-slate-950 dark:text-slate-50"
+                style={{ borderColor: profile.titleColor }}
+              >
                 현재 {profile.currentRating.toLocaleString("ko-KR")}
               </dd>
             </div>
             <div className="rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-sm text-slate-600 dark:text-slate-400">최고 레이팅</dt>
-              <dd className="font-bold" style={{ color: profile.titleColor }}>
+              <dd
+                className="border-s-2 ps-2 font-bold text-slate-950 dark:text-slate-50"
+                style={{ borderColor: profile.titleColor }}
+              >
                 최고 {profile.maxRating.toLocaleString("ko-KR")}
               </dd>
             </div>
