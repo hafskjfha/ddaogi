@@ -152,6 +152,26 @@ describe("contest analytics", () => {
     expect(() => parseScoreboard(invalidScoreboard)).toThrow(/scoreboard/i);
   });
 
+  it("accepts an untrusted raw boundary and rejects nested malformed JSON", () => {
+    const malformedScoreboards: readonly unknown[] = [
+      [["not", "a", "participant", "object"]],
+      [
+        {
+          rank: "1",
+          nickname: "nested-score",
+          problem_scores: [{ points: "100" }, ...emptyScores.slice(1)],
+          total_score: "100",
+          performance: "1500",
+          rating: 1500,
+        },
+      ],
+    ];
+
+    for (const malformedScoreboard of malformedScoreboards) {
+      expect(() => parseScoreboard(malformedScoreboard)).toThrow(/scoreboard/i);
+    }
+  });
+
   it("rejects analytics requests without ratings or outside the nine score columns", () => {
     const unratedEntries = parseScoreboard([
       {

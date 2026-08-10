@@ -7,29 +7,12 @@ import type {
   ScoreboardEntry,
 } from "@/features/contest/model/types";
 
-type ScoreboardScalar = string | number | boolean | null;
-type ScoreboardField = ScoreboardScalar | readonly ScoreboardScalar[];
-
-interface ScoreboardInputEntry {
-  readonly rank?: ScoreboardField;
-  readonly nickname?: ScoreboardField;
-  readonly problem_scores?: ScoreboardField;
-  readonly total_score?: ScoreboardField;
-  readonly performance?: ScoreboardField;
-  readonly rating?: ScoreboardField;
-}
-
-type ScoreboardRowInput = ScoreboardInputEntry | ScoreboardField;
-
-/** Untrusted JSON-like value accepted at the raw scoreboard boundary. */
-export type ScoreboardInput = readonly ScoreboardRowInput[] | object | ScoreboardScalar;
-
 const SCORE_THRESHOLDS = [25, 50, 75, 100] as const;
 const PROBLEM_COUNT = 9;
 
 /** Validates and normalizes the raw mock scoreboard rows. */
-export function parseScoreboard(input: ScoreboardInput): readonly ScoreboardEntry[] {
-  if (!isScoreboardRows(input)) {
+export function parseScoreboard(input: unknown): readonly ScoreboardEntry[] {
+  if (!isUnknownArray(input)) {
     throw invalidScoreboard("expected an array of participant rows");
   }
 
@@ -97,7 +80,7 @@ export function estimateProblemRatings(
 /** Builds the serializable contest dashboard from parsed metadata and raw scores. */
 export function buildContestDashboard(
   parsed: ParsedContestInfo,
-  scoreboard: ScoreboardInput,
+  scoreboard: unknown,
 ): ContestDashboardData {
   const entries = parseScoreboard(scoreboard);
   const ratingDistribution = calculateRatingDistribution(entries);
@@ -113,7 +96,7 @@ export function buildContestDashboard(
   };
 }
 
-function parseScoreboardEntry(input: ScoreboardRowInput, index: number): ScoreboardEntry {
+function parseScoreboardEntry(input: unknown, index: number): ScoreboardEntry {
   if (!isScoreboardObject(input)) {
     throw invalidScoreboard(`row ${index + 1} must be an object`);
   }
@@ -140,24 +123,22 @@ function parseScoreboardEntry(input: ScoreboardRowInput, index: number): Scorebo
   };
 }
 
-function isScoreboardObject(
-  value: ScoreboardRowInput,
-): value is ScoreboardInputEntry {
+function isScoreboardObject(value: unknown): value is Readonly<Record<string, unknown>> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function isScoreboardRows(value: ScoreboardInput): value is readonly ScoreboardRowInput[] {
+function isUnknownArray(value: unknown): value is readonly unknown[] {
   return Array.isArray(value);
 }
 
-function parsePositiveInteger(value: ScoreboardField | undefined, field: string): number {
+function parsePositiveInteger(value: unknown, field: string): number {
   if (typeof value !== "string" || !/^[1-9]\d*$/.test(value)) {
     throw invalidScoreboard(`${field} must be a positive integer string`);
   }
   return Number(value);
 }
 
-function parseNickname(value: ScoreboardField | undefined, index: number): string {
+function parseNickname(value: unknown, index: number): string {
   if (typeof value !== "string" || value.trim().length === 0) {
     throw invalidScoreboard(`row ${index + 1} nickname must be a non-empty string`);
   }
@@ -165,10 +146,10 @@ function parseNickname(value: ScoreboardField | undefined, index: number): strin
 }
 
 function parseProblemScores(
-  value: ScoreboardField | undefined,
+  value: unknown,
   index: number,
 ): readonly number[] {
-  if (!isScoreboardScalarArray(value) || value.length !== PROBLEM_COUNT) {
+  if (!isUnknownArray(value) || value.length !== PROBLEM_COUNT) {
     throw invalidScoreboard(`row ${index + 1} problem_scores must contain nine values`);
   }
 
@@ -186,13 +167,7 @@ function parseProblemScores(
   });
 }
 
-function isScoreboardScalarArray(
-  value: ScoreboardField | undefined,
-): value is readonly ScoreboardScalar[] {
-  return Array.isArray(value);
-}
-
-function parseNumericString(value: ScoreboardField | undefined, field: string): number {
+function parseNumericString(value: unknown, field: string): number {
   if (typeof value !== "string" || !/^(?:0|[1-9]\d*)(?:\.\d+)?$/.test(value)) {
     throw invalidScoreboard(`${field} must be a non-negative numeric string`);
   }
@@ -204,12 +179,12 @@ function parseNumericString(value: ScoreboardField | undefined, field: string): 
   return parsed;
 }
 
-function parsePerformance(value: ScoreboardField | undefined, index: number): number | null {
+function parsePerformance(value: unknown, index: number): number | null {
   if (value === "-") return null;
   return parseNumericString(value, `row ${index + 1} performance`);
 }
 
-function parseRating(value: ScoreboardField | undefined, index: number): number | null {
+function parseRating(value: unknown, index: number): number | null {
   if (value === undefined) return null;
   if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
     throw invalidScoreboard(`row ${index + 1} rating must be a non-negative finite number`);

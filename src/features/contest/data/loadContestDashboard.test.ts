@@ -1,6 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
-
-vi.mock("@/features/contest/data/serverOnly", () => ({}));
+import { describe, expect, it } from "vitest";
 
 import { loadContestDashboard } from "@/features/contest/data/loadContestDashboard";
 

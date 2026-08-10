@@ -1,11 +1,8 @@
-import "@/features/contest/data/serverOnly";
+import "server-only";
 
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import {
-  buildContestDashboard,
-  type ScoreboardInput,
-} from "@/features/contest/data/buildContestDashboard";
+import { buildContestDashboard } from "@/features/contest/data/buildContestDashboard";
 import { parseContestInfo } from "@/features/contest/data/parseContestInfo";
 import type { ContestDashboardData } from "@/features/contest/model/types";
 
@@ -21,7 +18,7 @@ export async function loadContestDashboard(
     readFile(resolve(process.cwd(), "data/contest_info.md"), "utf8"),
     readFile(resolve(process.cwd(), "data/contest_score_board.json"), "utf8"),
   ]);
-  const scoreboardInput = JSON.parse(scoreboardText) as ScoreboardInput;
+  const scoreboardInput: unknown = JSON.parse(scoreboardText);
 
   return buildContestDashboard(parseContestInfo(markdown), scoreboardInput);
 }
