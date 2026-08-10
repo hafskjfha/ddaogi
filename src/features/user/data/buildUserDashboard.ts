@@ -98,23 +98,23 @@ export function buildUserDashboard(
 
 function parseResultsInput(input: unknown): ReadonlyMap<string, readonly RawSubmission[]> {
   if (!isRecord(input)) {
-    throw new TypeError("Invalid results input: expected a problem record");
+    throw invalidResults("expected a problem record");
   }
 
   const parsed = new Map<string, readonly RawSubmission[]>();
 
   for (const [problemId, submissionsInput] of Object.entries(input)) {
     if (!Array.isArray(submissionsInput) || submissionsInput.length === 0) {
-      throw new TypeError(`Invalid results input: problem "${problemId}" must contain submissions`);
+      throw invalidResults(`problem "${problemId}" must contain submissions`);
     }
 
     if (!submissionsInput.every(isRawSubmission)) {
-      throw new TypeError(`Invalid submission in results input for problem "${problemId}"`);
+      throw invalidResults(`problem "${problemId}" contains an invalid submission`);
     }
 
     const first = submissionsInput[0];
     if (submissionsInput.some((submission) => submission.p_title !== first.p_title)) {
-      throw new TypeError(`Invalid submission metadata in results input for problem "${problemId}"`);
+      throw invalidResults(`problem "${problemId}" contains inconsistent submission metadata`);
     }
 
     parsed.set(problemId, submissionsInput);
@@ -125,25 +125,33 @@ function parseResultsInput(input: unknown): ReadonlyMap<string, readonly RawSubm
 
 function parseDifficultiesInput(input: unknown): ReadonlyMap<string, string> {
   if (!isRecord(input)) {
-    throw new TypeError("Invalid difficulty input: expected a problem record");
+    throw invalidDifficulties("expected a problem record");
   }
 
   const parsed = new Map<string, string>();
 
   for (const [problemId, difficulty] of Object.entries(input)) {
     if (typeof difficulty !== "string") {
-      throw new TypeError(`Invalid difficulty for problem "${problemId}"`);
+      throw invalidDifficulties(`problem "${problemId}" must have a string tier`);
     }
 
     const normalizedTier = parseProblemTier(difficulty);
     if (normalizedTier.label !== difficulty.trim()) {
-      throw new TypeError(`Invalid difficulty for problem "${problemId}"`);
+      throw invalidDifficulties(`problem "${problemId}" has unsupported tier "${difficulty}"`);
     }
 
     parsed.set(problemId, normalizedTier.label);
   }
 
   return parsed;
+}
+
+function invalidResults(message: string): TypeError {
+  return new TypeError(`Invalid result.json: ${message}`);
+}
+
+function invalidDifficulties(message: string): TypeError {
+  return new TypeError(`Invalid difficulty.json: ${message}`);
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

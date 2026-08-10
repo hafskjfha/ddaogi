@@ -16,8 +16,8 @@ export async function loadUserDashboard(handle: string): Promise<UserDashboardDa
     readFile(resolve(process.cwd(), "data/difficulty.json"), "utf8"),
   ]);
 
-  const resultsInput: unknown = JSON.parse(resultsText);
-  const difficultiesInput: unknown = JSON.parse(difficultyText);
+  const resultsInput = parseJsonSource(resultsText, "result.json");
+  const difficultiesInput = parseJsonSource(difficultyText, "difficulty.json");
 
   return buildUserDashboard(
     handle,
@@ -25,4 +25,17 @@ export async function loadUserDashboard(handle: string): Promise<UserDashboardDa
     resultsInput,
     difficultiesInput,
   );
+}
+
+function parseJsonSource(
+  source: string,
+  filename: "result.json" | "difficulty.json",
+): unknown {
+  try {
+    const input: unknown = JSON.parse(source);
+    return input;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new SyntaxError(`Invalid ${filename}: ${message}`, { cause: error });
+  }
 }
