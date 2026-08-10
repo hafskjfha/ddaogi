@@ -34,7 +34,8 @@ describe("ContestPage", () => {
     expect(loadContestDashboardMock).toHaveBeenCalledWith("doj-beginner-contest-4");
     expect(screen.getByRole("heading", { name: "DOJ Beginner Contest 4" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Rated 참가자 분포" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "문제 분석" })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "문제 분석" })).toBeInTheDocument();
+    expect(screen.getByRole("row", { name: "A 두 수열" })).toBeInTheDocument();
   });
 
   it("delegates unsupported contest slugs to the shared not-found boundary", async () => {
