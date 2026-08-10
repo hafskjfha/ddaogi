@@ -13,6 +13,7 @@ export const userDashboardFixture: UserDashboardData = {
     solvedCount: 1,
     solvedRank: null,
     podiumCount: 0,
+    firstPlaceCount: null,
     firstFullCount: 0,
   },
   initialRating: 1200,

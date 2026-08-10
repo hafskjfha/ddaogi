@@ -18,6 +18,7 @@ describe("buildUserDashboard", () => {
     expect(dashboard.totalSubmissions).toBe(215);
     expect(dashboard.languages.map((item) => item.count).reduce((a, b) => a + b, 0)).toBe(215);
     expect(dashboard.ratingHistory.at(-1)?.ratingAfter).toBe(1429);
+    expect(dashboard.profile.firstPlaceCount).toBeNull();
   });
 
   it("does not invent difficulty availability totals from attempted problems", () => {

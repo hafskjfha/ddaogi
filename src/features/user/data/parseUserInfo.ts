@@ -12,7 +12,7 @@ export type ParsedParticipation = Omit<
 export interface ParsedUserInfo {
   readonly profile: Omit<
     UserProfile,
-    "handle" | "title" | "titleColor" | "solvedCount" | "solvedRank"
+    "handle" | "title" | "titleColor" | "solvedCount" | "solvedRank" | "firstPlaceCount"
   >;
   readonly initialRating: number;
   readonly participations: readonly ParsedParticipation[];

@@ -24,7 +24,10 @@ export function MoreOverview({ dashboard }: { dashboard: UserDashboardData }) {
     },
     {
       label: "대회 1등",
-      value: `${dashboard.profile.podiumCount.toLocaleString("ko-KR")}회`,
+      value:
+        dashboard.profile.firstPlaceCount === null
+          ? "집계 미제공"
+          : `${dashboard.profile.firstPlaceCount.toLocaleString("ko-KR")}회`,
       icon: Trophy,
     },
     {

@@ -17,6 +17,7 @@ describe("UserProfileHero", () => {
           solvedCount: 90,
           solvedRank: null,
           podiumCount: 0,
+          firstPlaceCount: null,
           firstFullCount: 0,
         }}
       />,

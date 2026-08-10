@@ -53,12 +53,33 @@ const languageItems: readonly DistributionItem[] = [
 ];
 
 describe("MoreOverview", () => {
+  it("does not present a combined podium count as first-place wins", () => {
+    const dashboard: UserDashboardData = {
+      ...userDashboardFixture,
+      profile: {
+        ...userDashboardFixture.profile,
+        podiumCount: 3,
+      },
+    };
+
+    render(<MoreOverview dashboard={dashboard} />);
+
+    const firstPlaceCard = screen
+      .getByText("대회 1등")
+      .closest<HTMLElement>('[role="listitem"]');
+    if (!firstPlaceCard) throw new Error("First-place metric card is missing");
+
+    expect(within(firstPlaceCard).getByText("집계 미제공")).toBeInTheDocument();
+    expect(within(firstPlaceCard).queryByText("3회")).not.toBeInTheDocument();
+  });
+
   it("renders language labels, totals, wins, and first full scores", () => {
     const dashboard: UserDashboardData = {
       ...userDashboardFixture,
       profile: {
         ...userDashboardFixture.profile,
         podiumCount: 3,
+        firstPlaceCount: 5,
         firstFullCount: 7,
       },
       languages: languageItems,
@@ -77,7 +98,7 @@ describe("MoreOverview", () => {
     const metrics = screen.getByRole("list", { name: "기타 통계" });
     expect(within(metrics).getByText("1,234회")).toBeInTheDocument();
     expect(within(metrics).getByText("5개")).toBeInTheDocument();
-    expect(within(metrics).getByText("3회")).toBeInTheDocument();
+    expect(within(metrics).getByText("5회")).toBeInTheDocument();
     expect(within(metrics).getByText("7회")).toBeInTheDocument();
   });
 

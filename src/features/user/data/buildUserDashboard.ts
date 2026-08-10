@@ -79,6 +79,7 @@ export function buildUserDashboard(
       titleColor: titleBand.color,
       solvedCount: solvedProblems.length,
       solvedRank: null,
+      firstPlaceCount: null,
     },
     initialRating: user.initialRating,
     ratingHistory,
