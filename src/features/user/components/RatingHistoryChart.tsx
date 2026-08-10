@@ -17,9 +17,15 @@ import type { ContestParticipation } from "@/features/user/model/types";
 
 type RatingSeries = "rating" | "performance";
 
-interface ChartPoint extends ContestParticipation {
+interface ChartPoint {
   readonly index: number;
-  readonly seriesValue: number | null;
+  readonly name: string;
+  readonly date: string | null;
+  readonly rank: number | null;
+  readonly performanceRating: number | null;
+  readonly ratingDiff: number | null;
+  readonly ratingAfter: number;
+  readonly seriesValue: number;
 }
 
 function formatKoreanDate(date: string): string {
@@ -32,13 +38,13 @@ function formatSigned(value: number | null): string {
   return value > 0 ? `+${value}` : String(value);
 }
 
-function pointSummary(point: ContestParticipation): string {
+function pointSummary(point: ChartPoint): string {
   return [
     point.name,
-    formatKoreanDate(point.date),
+    point.date === null ? "날짜 -" : formatKoreanDate(point.date),
     `레이팅 ${point.ratingAfter}`,
     `변동 ${formatSigned(point.ratingDiff)}`,
-    `순위 ${point.rank}위`,
+    `순위 ${point.rank === null ? "-" : `${point.rank}위`}`,
     `퍼포먼스 ${point.performanceRating ?? "-"}`,
   ].join(" · ");
 }
@@ -54,14 +60,18 @@ function RatingTooltip({ active, payload }: TooltipContentProps) {
       className="rounded-lg border border-slate-200 bg-white p-3 text-sm shadow-lg dark:border-slate-700 dark:bg-slate-950"
     >
       <p className="font-bold">{point.name}</p>
-      <p className="text-slate-600 dark:text-slate-400">{formatKoreanDate(point.date)}</p>
+      <p className="text-slate-600 dark:text-slate-400">
+        {point.date === null ? "날짜 -" : formatKoreanDate(point.date)}
+      </p>
       <dl className="mt-2 grid grid-cols-[auto_auto] gap-x-4 gap-y-1">
         <dt>레이팅</dt>
         <dd className="text-right font-medium">{point.ratingAfter}</dd>
         <dt>변동</dt>
         <dd className="text-right font-medium">{formatSigned(point.ratingDiff)}</dd>
         <dt>순위</dt>
-        <dd className="text-right font-medium">{point.rank}위</dd>
+        <dd className="text-right font-medium">
+          {point.rank === null ? "-" : `${point.rank}위`}
+        </dd>
         <dt>퍼포먼스</dt>
         <dd className="text-right font-medium">{point.performanceRating ?? "-"}</dd>
       </dl>
@@ -69,17 +79,52 @@ function RatingTooltip({ active, payload }: TooltipContentProps) {
   );
 }
 
-function getChartDomain(
+function buildChartData(
   initialRating: number,
   history: readonly ContestParticipation[],
   series: RatingSeries,
-): readonly [number, number] {
-  const values = history.flatMap((contest) => {
-    const value = series === "rating" ? contest.ratingAfter : contest.performanceRating;
-    return value === null ? [] : [value];
+): readonly ChartPoint[] {
+  const contests = history.flatMap((contest) => {
+    if (!contest.rated) return [];
+    const seriesValue = series === "rating" ? contest.ratingAfter : contest.performanceRating;
+    if (seriesValue === null) return [];
+
+    return [
+      {
+        index: 0,
+        name: contest.name,
+        date: contest.date,
+        rank: contest.rank,
+        performanceRating: contest.performanceRating,
+        ratingDiff: contest.ratingDiff,
+        ratingAfter: contest.ratingAfter,
+        seriesValue,
+      },
+    ];
   });
-  if (series === "rating") values.push(initialRating);
-  if (values.length === 0) values.push(initialRating);
+  const indexedContests = contests.map((contest, index) => ({ ...contest, index: index + 1 }));
+
+  if (series === "performance") return indexedContests;
+  return [
+    {
+      index: 0,
+      name: "초기 레이팅",
+      date: null,
+      rank: null,
+      performanceRating: null,
+      ratingDiff: null,
+      ratingAfter: initialRating,
+      seriesValue: initialRating,
+    },
+    ...indexedContests,
+  ];
+}
+
+function getChartDomain(
+  initialRating: number,
+  data: readonly ChartPoint[],
+): readonly [number, number] {
+  const values = data.length === 0 ? [initialRating] : data.map((point) => point.seriesValue);
 
   const minimum = Math.min(...values);
   const maximum = Math.max(...values);
@@ -87,7 +132,7 @@ function getChartDomain(
   return [Math.max(0, Math.floor((minimum - padding) / 100) * 100), Math.ceil((maximum + padding) / 100) * 100];
 }
 
-/** Renders a banded rating or performance chart with an accessible point-by-point summary. */
+/** Renders initial/rated event series in a banded chart with an accessible point summary. */
 export function RatingHistoryChart({
   initialRating,
   history,
@@ -97,13 +142,9 @@ export function RatingHistoryChart({
   history: readonly ContestParticipation[];
   series: RatingSeries;
 }) {
-  const data: readonly ChartPoint[] = history.map((contest, index) => ({
-    ...contest,
-    index: index + 1,
-    seriesValue: series === "rating" ? contest.ratingAfter : contest.performanceRating,
-  }));
-  const domain = getChartDomain(initialRating, history, series);
-  const lineValue = [...data].reverse().find((point) => point.seriesValue !== null)?.seriesValue ?? initialRating;
+  const data = buildChartData(initialRating, history, series);
+  const domain = getChartDomain(initialRating, data);
+  const lineValue = data.at(-1)?.seriesValue ?? initialRating;
   const lineColor = getRatingBand(lineValue).color;
   const title = series === "rating" ? "레이팅 변화" : "퍼포먼스 변화";
 
@@ -136,7 +177,10 @@ export function RatingHistoryChart({
                 );
               })}
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="index" tickFormatter={(value) => `${value}회`} />
+              <XAxis
+                dataKey="index"
+                tickFormatter={(value: number) => (value === 0 ? "초기" : `${value}회`)}
+              />
               <YAxis domain={[domain[0], domain[1]]} width={48} />
               <Tooltip content={RatingTooltip} />
               <Line
@@ -145,7 +189,6 @@ export function RatingHistoryChart({
                 name={title}
                 stroke={lineColor}
                 strokeWidth={3}
-                connectNulls={false}
                 dot={{ r: 4 }}
                 activeDot={{ r: 6 }}
                 isAnimationActive={false}
@@ -158,8 +201,8 @@ export function RatingHistoryChart({
             차트 데이터 자세히 보기
           </summary>
           <ul aria-label={`${title} 상세`} className="mt-3 space-y-2 text-slate-600 dark:text-slate-400">
-            {history.map((point) => (
-              <li key={`${point.date}-${point.name}`}>{pointSummary(point)}</li>
+            {data.map((point) => (
+              <li key={`${point.index}-${point.name}`}>{pointSummary(point)}</li>
             ))}
           </ul>
         </details>

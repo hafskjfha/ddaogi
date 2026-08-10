@@ -68,19 +68,24 @@ describe("RatingOverview", () => {
     expect(screen.getAllByText("-").length).toBeGreaterThan(0);
   });
 
-  it("provides every chart point as an accessible text summary", () => {
+  it("starts rating history at the initial rating and plots only rated contests", () => {
     render(<RatingOverview dashboard={userDashboardFixture} />);
 
     const disclosure = screen.getByText("차트 데이터 자세히 보기");
     expect(disclosure.tagName).toBe("SUMMARY");
     fireEvent.click(disclosure);
     const summary = screen.getByRole("list", { name: "레이팅 변화 상세" });
-    expect(within(summary).getByText(/67 Contest/)).toHaveTextContent(
-      "67 Contest · 2026년 6월 7일 · 레이팅 1200 · 변동 - · 순위 11위 · 퍼포먼스 -",
+    expect(within(summary).getAllByRole("listitem")).toHaveLength(3);
+    expect(within(summary).getByText(/초기 레이팅/)).toHaveTextContent(
+      "초기 레이팅 · 날짜 - · 레이팅 1200 · 변동 - · 순위 - · 퍼포먼스 -",
     );
+    expect(within(summary).queryByText(/67 Contest/)).not.toBeInTheDocument();
     expect(within(summary).getByText(/DOJ Contest 3/)).toHaveTextContent(
       "DOJ Contest 3 · 2026년 6월 14일 · 레이팅 1368 · 변동 +168 · 순위 23위 · 퍼포먼스 1871",
     );
+    const unratedRow = screen.getByRole("row", { name: /2026\.06\.07 67 Contest 11 - 1200 - -/ });
+    expect(unratedRow).toBeInTheDocument();
+    expect(within(unratedRow).getAllByText("-")).toHaveLength(3);
   });
 
   it("renders rating bands, changes the selected series path, and exposes the chart tooltip", async () => {
@@ -91,6 +96,7 @@ describe("RatingOverview", () => {
     const ratingPath = container.querySelector(".recharts-line-curve")?.getAttribute("d");
     expect(ratingPath).toBeTruthy();
 
+    expect(container.querySelectorAll(".recharts-line-dot")).toHaveLength(3);
     const firstDot = container.querySelector<SVGCircleElement>(".recharts-line-dot");
     expect(firstDot).not.toBeNull();
     fireEvent.mouseMove(firstDot!, {
@@ -98,11 +104,56 @@ describe("RatingOverview", () => {
       clientY: Number(firstDot!.getAttribute("cy")),
     });
     expect(await screen.findByRole("tooltip", { hidden: true })).toHaveTextContent(
-      "67 Contest2026년 6월 7일레이팅1200변동-순위11위퍼포먼스-",
+      "초기 레이팅날짜 -레이팅1200변동-순위-퍼포먼스-",
     );
 
     await user.click(screen.getByRole("button", { name: "퍼포먼스 보기" }));
     expect(container.querySelector(".recharts-line-curve")?.getAttribute("d")).not.toBe(ratingPath);
+    expect(container.querySelectorAll(".recharts-line-dot")).toHaveLength(2);
+
+    fireEvent.click(screen.getByText("차트 데이터 자세히 보기"));
+    const performanceSummary = screen.getByRole("list", { name: "퍼포먼스 변화 상세" });
+    expect(within(performanceSummary).getAllByRole("listitem")).toHaveLength(2);
+    expect(within(performanceSummary).queryByText(/67 Contest/)).not.toBeInTheDocument();
+    expect(within(performanceSummary).queryByText(/퍼포먼스 -/)).not.toBeInTheDocument();
+  });
+
+  it("keeps empty and one-rated-event chart domains usable", async () => {
+    const user = userEvent.setup();
+    const { container, rerender } = render(
+      <RatingOverview dashboard={{ ...userDashboardFixture, ratingHistory: [] }} />,
+    );
+
+    fireEvent.click(screen.getByText("차트 데이터 자세히 보기"));
+    expect(
+      within(screen.getByRole("list", { name: "레이팅 변화 상세" })).getAllByRole("listitem"),
+    ).toHaveLength(1);
+
+    await user.click(screen.getByRole("button", { name: "퍼포먼스 보기" }));
+    expect(
+      within(screen.getByRole("list", { name: "퍼포먼스 변화 상세" })).queryAllByRole(
+        "listitem",
+      ),
+    ).toHaveLength(0);
+    expect(container.querySelectorAll(".recharts-line-dot")).toHaveLength(0);
+
+    rerender(
+      <RatingOverview
+        dashboard={{ ...userDashboardFixture, ratingHistory: [userDashboardFixture.ratingHistory[1]] }}
+      />,
+    );
+    expect(
+      within(screen.getByRole("list", { name: "퍼포먼스 변화 상세" })).getAllByRole(
+        "listitem",
+      ),
+    ).toHaveLength(1);
+
+    await user.click(screen.getByRole("button", { name: "레이팅 보기" }));
+    expect(
+      within(screen.getByRole("list", { name: "레이팅 변화 상세" })).getAllByRole("listitem"),
+    ).toHaveLength(2);
+    expect(container.querySelectorAll(".recharts-line-dot")).toHaveLength(2);
+    expect(container.querySelector(".recharts-line-curve")?.getAttribute("d")).toBeTruthy();
   });
 
   it("lists contests newest first and only displays real tier transitions", () => {
