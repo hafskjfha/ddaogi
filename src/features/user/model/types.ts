@@ -24,6 +24,7 @@ export interface UserProfile {
   readonly title: RatingTitle;
   readonly titleColor: string;
   readonly solvedCount: number;
+  readonly solvedRank: number | null;
   readonly podiumCount: number;
   readonly firstFullCount: number;
 }

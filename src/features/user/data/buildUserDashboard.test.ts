@@ -35,6 +35,12 @@ describe("buildUserDashboard", () => {
     expect(dashboard.difficultyDetails.every((item) => item.totalAvailable === null)).toBe(true);
   });
 
+  it("marks the solved rank unavailable without an authoritative source", () => {
+    const dashboard = buildUserDashboard("jtw7913", user, results, difficulties);
+
+    expect(dashboard.profile.solvedRank).toBeNull();
+  });
+
   it("normalizes submissions and uses Unrated when a difficulty is missing", () => {
     const dashboard = buildUserDashboard(
       "jtw7913",

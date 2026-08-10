@@ -53,6 +53,12 @@ export function UserProfileHero({ profile }: { profile: UserProfile }) {
             <div className="rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-sm text-slate-600 dark:text-slate-400">만점 문제 수</dt>
               <dd className="font-bold">{profile.solvedCount}문제</dd>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                만점 랭킹: {" "}
+                {profile.solvedRank === null
+                  ? "집계 미제공"
+                  : `${profile.solvedRank.toLocaleString("ko-KR")}등`}
+              </p>
             </div>
           </dl>
         </div>

@@ -10,7 +10,10 @@ export type ParsedParticipation = Omit<
 >;
 
 export interface ParsedUserInfo {
-  readonly profile: Omit<UserProfile, "handle" | "title" | "titleColor" | "solvedCount">;
+  readonly profile: Omit<
+    UserProfile,
+    "handle" | "title" | "titleColor" | "solvedCount" | "solvedRank"
+  >;
   readonly initialRating: number;
   readonly participations: readonly ParsedParticipation[];
   readonly contestCalendar: readonly ContestCalendarEntry[];

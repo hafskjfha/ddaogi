@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { UserProfileHero } from "@/features/user/components/UserProfileHero";
 
 describe("UserProfileHero", () => {
-  it("renders the supplied profile metrics, styles, and accessible fallbacks", () => {
+  it("renders the supplied profile metrics, unavailable solved rank, styles, and accessible fallbacks", () => {
     render(
       <UserProfileHero
         profile={{
@@ -15,6 +15,7 @@ describe("UserProfileHero", () => {
           title: "SPECIALIST",
           titleColor: "rgb(20, 184, 166)",
           solvedCount: 90,
+          solvedRank: null,
           podiumCount: 0,
           firstFullCount: 0,
         }}
@@ -31,5 +32,6 @@ describe("UserProfileHero", () => {
     expect(screen.getByText("현재 1,429")).toHaveStyle({ color: "rgb(20, 184, 166)" });
     expect(screen.getByText("최고 1,429")).toBeInTheDocument();
     expect(screen.getByText("90문제")).toBeInTheDocument();
+    expect(screen.getByText("만점 랭킹: 집계 미제공")).toBeInTheDocument();
   });
 });

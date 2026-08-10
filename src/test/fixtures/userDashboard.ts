@@ -11,6 +11,7 @@ export const userDashboardFixture: UserDashboardData = {
     title: "SPECIALIST",
     titleColor: "rgb(20, 184, 166)",
     solvedCount: 1,
+    solvedRank: null,
     podiumCount: 0,
     firstFullCount: 0,
   },
