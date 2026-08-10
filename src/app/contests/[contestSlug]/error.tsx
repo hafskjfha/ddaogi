@@ -2,7 +2,7 @@
 
 import { RotateCcw, Trophy, TriangleAlert, UserRound } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
@@ -16,7 +16,11 @@ const recoveryLinkClass =
 
 /** Presents retry and supported-route recovery when contest loading fails. */
 export default function ContestDashboardError({ error, retry }: ContestDashboardErrorProps) {
+  const loggedErrorRef = useRef<Error | null>(null);
+
   useEffect(() => {
+    if (loggedErrorRef.current === error) return;
+    loggedErrorRef.current = error;
     console.error(error);
   }, [error]);
 
