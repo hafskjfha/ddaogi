@@ -31,4 +31,25 @@ describe("UserDashboardError", () => {
     expect(consoleError).toHaveBeenCalledTimes(2);
     expect(consoleError).toHaveBeenLastCalledWith(nextError);
   });
+
+  it("logs a shared error once for each independent boundary instance", () => {
+    const retry = vi.fn();
+    const sharedError = new Error("shared user route failure");
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+
+    render(
+      <StrictMode>
+        <UserDashboardError error={sharedError} retry={retry} />
+      </StrictMode>,
+    );
+    render(
+      <StrictMode>
+        <UserDashboardError error={sharedError} retry={retry} />
+      </StrictMode>,
+    );
+
+    expect(consoleError).toHaveBeenCalledTimes(2);
+    expect(consoleError).toHaveBeenNthCalledWith(1, sharedError);
+    expect(consoleError).toHaveBeenNthCalledWith(2, sharedError);
+  });
 });
