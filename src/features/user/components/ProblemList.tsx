@@ -46,7 +46,14 @@ export function ProblemList({
                         <ExternalLink aria-hidden="true" className="size-4 shrink-0" />
                       </a>
                     </TooltipTrigger>
-                    <TooltipContent>{problem.title}</TooltipContent>
+                    <TooltipContent>
+                      <p>{problem.title}</p>
+                      {showScore ? (
+                        <p>
+                          {problem.bestScore} / {problem.maxScore}점
+                        </p>
+                      ) : null}
+                    </TooltipContent>
                   </Tooltip>
                   {showScore ? (
                     <p className="mt-2 text-sm font-medium text-amber-700 dark:text-amber-300">

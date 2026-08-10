@@ -101,6 +101,26 @@ describe("ProblemOverview", () => {
     expect(await screen.findByRole("tooltip")).toHaveTextContent("두 수열");
   });
 
+  it("includes partial score context in problem tooltips without changing solved tooltips", async () => {
+    const user = userEvent.setup();
+    const partialView = render(<ProblemOverview dashboard={userDashboardFixture} />);
+    const partialProblem = screen.getByRole("link", { name: /직사각형 1/ });
+
+    expect(partialProblem).toHaveAttribute("target", "_blank");
+    expect(partialProblem).toHaveAttribute("rel", "noreferrer");
+    await user.hover(partialProblem);
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("직사각형 1");
+    expect(screen.getByRole("tooltip")).toHaveTextContent("34 / 100점");
+
+    partialView.unmount();
+    render(<ProblemOverview dashboard={userDashboardFixture} />);
+    const solvedProblem = screen.getByRole("link", { name: /두 수열/ });
+    solvedProblem.focus();
+    fireEvent.focus(solvedProblem);
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("두 수열");
+    expect(screen.getByRole("tooltip")).not.toHaveTextContent("100 / 100점");
+  });
+
   it("renders keyboard-readable first-full activity with normalized streak summaries", async () => {
     render(<ProblemOverview dashboard={userDashboardFixture} />);
 
