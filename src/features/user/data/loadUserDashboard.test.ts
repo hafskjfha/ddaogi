@@ -53,7 +53,8 @@ describe("loadUserDashboard", () => {
 
     const error = await captureLoadError();
 
-    expect(error.message).toMatch(/result\.json/);
+    expect(error.message).toMatch(/result\.json/i);
+    expect(error.message).toMatch(/expected a problem record/i);
     expect(error.message).not.toMatch(/difficulty\.json/);
   });
 
@@ -62,7 +63,30 @@ describe("loadUserDashboard", () => {
 
     const error = await captureLoadError();
 
-    expect(error.message).toMatch(/difficulty\.json/);
+    expect(error.message).toMatch(/difficulty\.json/i);
+    expect(error.message).toMatch(/expected a problem record/i);
+    expect(error.message).not.toMatch(/result\.json/);
+  });
+
+  it("preserves result.json problem details for a malformed record", async () => {
+    writeUserSources(markdown, '{"problem-17":[]}', difficultyText);
+
+    const error = await captureLoadError();
+
+    expect(error.message).toMatch(/result\.json/i);
+    expect(error.message).toMatch(/problem-17/);
+    expect(error.message).toMatch(/submissions/i);
+    expect(error.message).not.toMatch(/difficulty\.json/);
+  });
+
+  it("preserves difficulty.json problem details for a malformed record", async () => {
+    writeUserSources(markdown, resultsText, '{"problem-23":42}');
+
+    const error = await captureLoadError();
+
+    expect(error.message).toMatch(/difficulty\.json/i);
+    expect(error.message).toMatch(/problem-23/);
+    expect(error.message).toMatch(/string tier/i);
     expect(error.message).not.toMatch(/result\.json/);
   });
 
