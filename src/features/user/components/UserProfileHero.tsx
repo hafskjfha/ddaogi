@@ -19,8 +19,9 @@ export function UserProfileHero({ profile }: { profile: UserProfile }) {
       </div>
       <div className="grid gap-6 px-5 pb-6 sm:px-8 lg:grid-cols-[auto_1fr]">
         <div
+          role="img"
           aria-label={`${profile.handle} 프로필 이미지 대체 표시`}
-          className="-mt-12 grid size-24 place-items-center rounded-3xl border-4 border-white bg-slate-900 text-2xl font-black text-white dark:border-slate-950"
+          className="-mt-12 grid size-24 place-items-center rounded-full border-4 border-white bg-slate-900 text-2xl font-black text-white dark:border-slate-950"
         >
           {initials}
         </div>
