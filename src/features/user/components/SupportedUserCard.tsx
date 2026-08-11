@@ -1,7 +1,10 @@
 import { ArrowRight, UserRound } from "lucide-react";
 import Link from "next/link";
+import { RATING_TEXT_CLASSES, RatingTitleText } from "@/components/RatingText";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { getRatingBand } from "@/domain/rating";
 import type { SupportedUserSummary } from "@/features/user/data/userCatalog";
+import { cn } from "@/lib/cn";
 
 interface SupportedUserCardProps {
   readonly user: SupportedUserSummary;
@@ -9,13 +12,20 @@ interface SupportedUserCardProps {
 
 /** Summarizes the single available profile and links to its full analysis. */
 export function SupportedUserCard({ user }: SupportedUserCardProps) {
+  const ratingBand = getRatingBand(user.currentRating);
+
   return (
-    <Card>
+    <Card className="border-s-4" style={{ borderInlineStartColor: ratingBand.color }}>
       <CardHeader className="flex-row items-start gap-3">
-        <UserRound aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-blue-600 dark:text-blue-400" />
+        <UserRound
+          aria-hidden="true"
+          className={cn("mt-0.5 size-5 shrink-0", RATING_TEXT_CLASSES[ratingBand.title])}
+        />
         <div className="space-y-1">
           <h2 className="text-lg font-semibold leading-none tracking-tight">{user.handle}</h2>
-          <p className="text-sm font-medium text-blue-700 dark:text-blue-300">{user.title}</p>
+          <p className="text-sm font-medium">
+            <RatingTitleText title={ratingBand.title}>{ratingBand.title}</RatingTitleText>
+          </p>
           <p className="text-sm text-slate-600 dark:text-slate-400">
             현재 이용 가능한 데모 프로필입니다. 현재는 jtw7913만 제공됩니다.
           </p>
