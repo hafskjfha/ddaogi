@@ -53,12 +53,13 @@ const languageItems: readonly DistributionItem[] = [
 ];
 
 describe("MoreOverview", () => {
-  it("does not present a combined podium count as first-place wins", () => {
+  it("renders an explicit zero first-place count instead of unavailable copy", () => {
     const dashboard: UserDashboardData = {
       ...userDashboardFixture,
       profile: {
         ...userDashboardFixture.profile,
         podiumCount: 3,
+        firstPlaceCount: 0,
       },
     };
 
@@ -69,8 +70,9 @@ describe("MoreOverview", () => {
       .closest<HTMLElement>('[role="listitem"]');
     if (!firstPlaceCard) throw new Error("First-place metric card is missing");
 
-    expect(within(firstPlaceCard).getByText("집계 미제공")).toBeInTheDocument();
+    expect(within(firstPlaceCard).getByText("0회")).toBeInTheDocument();
     expect(within(firstPlaceCard).queryByText("3회")).not.toBeInTheDocument();
+    expect(within(firstPlaceCard).queryByText("집계 미제공")).not.toBeInTheDocument();
   });
 
   it("renders language labels, totals, wins, and first full scores", () => {

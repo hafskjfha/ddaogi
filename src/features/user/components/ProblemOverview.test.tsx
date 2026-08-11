@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+import { parseProblemTier } from "@/domain/problemTier";
 import { ProblemOverview } from "@/features/user/components/ProblemOverview";
 import type { DistributionItem, UserDashboardData } from "@/features/user/model/types";
 import { userDashboardFixture } from "@/test/fixtures/userDashboard";
@@ -72,6 +73,56 @@ const analyticsFixture: UserDashboardData = {
 };
 
 describe("ProblemOverview", () => {
+  it("gives each non-empty problem list its own bounded keyboard-scrollable region", () => {
+    render(<ProblemOverview dashboard={userDashboardFixture} />);
+
+    const solvedRegion = screen.getByRole("region", { name: "만점 문제 목록" });
+    const partialRegion = screen.getByRole("region", { name: "만점 미달 목록" });
+
+    for (const region of [solvedRegion, partialRegion]) {
+      expect(region).toHaveAttribute("tabindex", "0");
+      expect(region).toHaveClass(
+        "max-h-[32rem]",
+        "overflow-y-auto",
+        "overscroll-contain",
+        "pe-2",
+      );
+    }
+  });
+
+  it("renders tier-group badges while preserving safe links and partial score context", async () => {
+    const user = userEvent.setup();
+    const dashboard: UserDashboardData = {
+      ...userDashboardFixture,
+      problems: [
+        {
+          ...userDashboardFixture.problems[0],
+          id: "94",
+          title: "Unrated Problem",
+          tier: parseProblemTier(),
+        },
+        {
+          ...userDashboardFixture.problems[1],
+          id: "65",
+          title: "Gold Problem",
+          tier: parseProblemTier("Gold I"),
+        },
+      ],
+    };
+    render(<ProblemOverview dashboard={dashboard} />);
+
+    const unratedLink = screen.getByRole("link", { name: /94.*Unrated Problem/ });
+    const goldLink = screen.getByRole("link", { name: /65.*Gold Problem/ });
+    expect(within(unratedLink).getByText("UR")).toHaveClass("bg-black", "text-white");
+    expect(within(goldLink).getByText("G1")).toHaveClass("bg-[#ec9a00]", "text-slate-950");
+    expect(goldLink).toHaveAttribute("target", "_blank");
+    expect(goldLink).toHaveAttribute("rel", "noreferrer");
+
+    await user.hover(goldLink);
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("Gold Problem");
+    expect(screen.getByRole("tooltip")).toHaveTextContent("34 / 100점");
+  });
+
   it("separates solved and partial problems and toggles tier detail", async () => {
     const user = userEvent.setup();
     render(<ProblemOverview dashboard={userDashboardFixture} />);

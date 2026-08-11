@@ -1,11 +1,11 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { UserProfileHero } from "@/features/user/components/UserProfileHero";
 
 const SPECIALIST_COLOR = "rgb(20, 184, 166)";
 
 describe("UserProfileHero", () => {
-  it("renders the supplied profile metrics, unavailable solved rank, styles, and accessible fallbacks", () => {
+  it("consolidates supplied rank metrics in their respective cards", () => {
     render(
       <UserProfileHero
         profile={{
@@ -17,9 +17,9 @@ describe("UserProfileHero", () => {
           title: "SPECIALIST",
           titleColor: SPECIALIST_COLOR,
           solvedCount: 90,
-          solvedRank: null,
+          solvedRank: 9,
           podiumCount: 0,
-          firstPlaceCount: null,
+          firstPlaceCount: 0,
           firstFullCount: 0,
         }}
       />,
@@ -31,11 +31,17 @@ describe("UserProfileHero", () => {
       screen.getByRole("img", { name: "jtw7913 프로필 이미지 대체 표시" }),
     ).toHaveClass("rounded-full");
     expect(screen.getByLabelText("jtw7913 장착 플랜카드 대체 표시")).toBeInTheDocument();
-    expect(screen.getByText("89등 · top 31.3%")).toBeInTheDocument();
+    expect(screen.queryByText("89등 · top 31.3%")).not.toBeInTheDocument();
+    const ratingRankCard = screen.getByText("레이팅 랭킹").closest("div");
+    if (!ratingRankCard) throw new Error("Rating-rank card is missing");
+    expect(within(ratingRankCard).getByText("89등")).toBeInTheDocument();
+    expect(within(ratingRankCard).getByText("top 31.3%")).toBeInTheDocument();
     expect(screen.getByText("현재 1,429")).not.toHaveStyle({ color: SPECIALIST_COLOR });
     expect(screen.getByText("최고 1,429")).toBeInTheDocument();
     expect(screen.getByText("90문제")).toBeInTheDocument();
-    expect(screen.getByText("만점 랭킹: 집계 미제공")).toBeInTheDocument();
+    const solvedCard = screen.getByText("만점 문제 수").closest("div");
+    if (!solvedCard) throw new Error("Full-score card is missing");
+    expect(within(solvedCard).getByText("만점 랭킹: 9등")).toBeInTheDocument();
   });
 
   it("keeps the fallback avatar above the banner overlay", () => {
@@ -77,9 +83,9 @@ const specialistProfile = {
   title: "SPECIALIST",
   titleColor: SPECIALIST_COLOR,
   solvedCount: 90,
-  solvedRank: null,
+  solvedRank: 9,
   podiumCount: 0,
-  firstPlaceCount: null,
+  firstPlaceCount: 0,
   firstFullCount: 0,
 } as const;
 

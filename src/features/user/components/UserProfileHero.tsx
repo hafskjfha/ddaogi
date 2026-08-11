@@ -33,9 +33,6 @@ export function UserProfileHero({ profile }: { profile: UserProfile }) {
           >
             {profile.title}
           </p>
-          <p className="text-slate-600 dark:text-slate-400">
-            {profile.ratingRank}등 · top {profile.ratingPercentile}%
-          </p>
           <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-sm text-slate-600 dark:text-slate-400">현재 레이팅</dt>
@@ -58,6 +55,9 @@ export function UserProfileHero({ profile }: { profile: UserProfile }) {
             <div className="rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-sm text-slate-600 dark:text-slate-400">레이팅 랭킹</dt>
               <dd className="font-bold">{profile.ratingRank}등</dd>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                top {profile.ratingPercentile}%
+              </p>
             </div>
             <div className="rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-sm text-slate-600 dark:text-slate-400">만점 문제 수</dt>

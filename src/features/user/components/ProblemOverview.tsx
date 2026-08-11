@@ -13,8 +13,18 @@ export function ProblemOverview({ dashboard }: { dashboard: UserDashboardData })
   return (
     <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-2">
-        <ProblemList title="만점 문제" problems={solved} showScore={false} />
-        <ProblemList title="만점 미달" problems={partial} showScore />
+        <ProblemList
+          title="만점 문제"
+          listLabel="만점 문제 목록"
+          problems={solved}
+          showScore={false}
+        />
+        <ProblemList
+          title="만점 미달"
+          listLabel="만점 미달 목록"
+          problems={partial}
+          showScore
+        />
       </div>
       <ProblemSolveStreak data={dashboard.problemSolveStreak} />
       <DifficultyDistribution groups={dashboard.difficultyGroups} details={dashboard.difficultyDetails} />

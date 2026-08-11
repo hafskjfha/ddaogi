@@ -1,6 +1,6 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { RatingOverview } from "@/features/user/components/RatingOverview";
 import { userDashboardFixture } from "@/test/fixtures/userDashboard";
 
@@ -55,6 +55,10 @@ describe("RatingOverview", () => {
 
   afterAll(() => {
     globalThis.ResizeObserver = SharedResizeObserver;
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("switches rating series and exposes all rating fields", async () => {
@@ -241,5 +245,60 @@ describe("RatingOverview", () => {
     await user.tab();
     await user.tab();
     expect(cells[0]).toHaveFocus();
+  });
+
+  it("keeps only the latest contest tooltip open across delayed pointer and focus closes", async () => {
+    vi.useFakeTimers();
+    const dashboard = {
+      ...userDashboardFixture,
+      contestStreak: {
+        ...userDashboardFixture.contestStreak,
+        entries: [
+          { index: 1, date: "2026-06-07", name: "DOJ Contest 1", participated: true },
+          { index: 2, date: "2026-06-14", name: "DOJ Contest 2", participated: true },
+        ],
+      },
+    };
+    render(<RatingOverview dashboard={dashboard} />);
+
+    const firstCell = screen.getByRole("button", { name: /1회차/ });
+    const secondCell = screen.getByRole("button", { name: /2회차/ });
+
+    fireEvent.pointerMove(firstCell, { pointerType: "mouse" });
+    await act(() => vi.advanceTimersByTimeAsync(150));
+    expect(screen.getByText("DOJ Contest 1")).toBeInTheDocument();
+
+    fireEvent.pointerLeave(firstCell, { pointerType: "mouse" });
+    fireEvent.pointerMove(document.body, {
+      pointerType: "mouse",
+      clientX: 100,
+      clientY: 100,
+    });
+    fireEvent.pointerMove(secondCell, { pointerType: "mouse" });
+    await act(() => vi.advanceTimersByTimeAsync(150));
+    await act(() => vi.advanceTimersByTimeAsync(300));
+    expect(screen.queryByText("DOJ Contest 1")).not.toBeInTheDocument();
+    expect(screen.getByText("DOJ Contest 2")).toBeInTheDocument();
+
+    fireEvent.pointerLeave(secondCell, { pointerType: "mouse" });
+    fireEvent.pointerMove(document.body, {
+      pointerType: "mouse",
+      clientX: 100,
+      clientY: 100,
+    });
+    await act(() => vi.advanceTimersByTimeAsync(300));
+    fireEvent.focus(firstCell);
+    await act(() => vi.advanceTimersByTimeAsync(150));
+    expect(screen.getByText("DOJ Contest 1")).toBeInTheDocument();
+
+    act(() => {
+      secondCell.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+      firstCell.dispatchEvent(
+        new FocusEvent("focusout", { bubbles: true, relatedTarget: secondCell }),
+      );
+    });
+    await act(() => vi.advanceTimersByTimeAsync(300));
+    expect(screen.queryByText("DOJ Contest 1")).not.toBeInTheDocument();
+    expect(screen.getByText("DOJ Contest 2")).toBeInTheDocument();
   });
 });
