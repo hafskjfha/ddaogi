@@ -54,6 +54,94 @@ const markdown = `# DOJ Beginner Contest 4 대회 정보
 - 난이도: D2
 - FF: -`;
 
+const linkedProblemCases = [
+  {
+    index: "A",
+    href: "https://doj.kr/ko/problems/342",
+    firstFull: {
+      handle: "jkrt",
+      rating: 2369,
+      href: "https://doj.kr/ko/user/cmorx2455005q5f7m2wqvcewh",
+      time: "0m 55s",
+    },
+  },
+  {
+    index: "B",
+    href: "https://doj.kr/ko/problems/343",
+    firstFull: {
+      handle: "cenix820",
+      rating: 2052,
+      href: "https://doj.kr/ko/user/cmordu9f2001wse16r3jay8w4",
+      time: "1m 16s",
+    },
+  },
+  {
+    index: "C",
+    href: "https://doj.kr/ko/problems/344",
+    firstFull: {
+      handle: "RreShi",
+      rating: 1777,
+      href: "https://doj.kr/ko/user/cmozmyjdx00r111qkc0ecc12w",
+      time: "3m 54s",
+    },
+  },
+  {
+    index: "D",
+    href: "https://doj.kr/ko/problems/345",
+    firstFull: {
+      handle: "RreShi",
+      rating: 1777,
+      href: "https://doj.kr/ko/user/cmozmyjdx00r111qkc0ecc12w",
+      time: "7m 29s",
+    },
+  },
+  {
+    index: "E",
+    href: "https://doj.kr/ko/problems/346",
+    firstFull: {
+      handle: "RreShi",
+      rating: 1777,
+      href: "https://doj.kr/ko/user/cmozmyjdx00r111qkc0ecc12w",
+      time: "10m 36s",
+    },
+  },
+  {
+    index: "F",
+    href: "https://doj.kr/ko/problems/347",
+    firstFull: {
+      handle: "plast",
+      rating: 2286,
+      href: "https://doj.kr/ko/user/cmolny8hj0053unpdl5zz2rqc",
+      time: "32m 31s",
+    },
+  },
+  {
+    index: "G",
+    href: "https://doj.kr/ko/problems/348",
+    firstFull: {
+      handle: "RreShi",
+      rating: 1777,
+      href: "https://doj.kr/ko/user/cmozmyjdx00r111qkc0ecc12w",
+      time: "19m 0s",
+    },
+  },
+  {
+    index: "H",
+    href: "https://doj.kr/ko/problems/349",
+    firstFull: {
+      handle: "platter",
+      rating: 2603,
+      href: "https://doj.kr/ko/user/cmps2k3v300kdeog07f22z0pz",
+      time: "61m 18s",
+    },
+  },
+  {
+    index: "I",
+    href: "https://doj.kr/ko/problems/350",
+    firstFull: null,
+  },
+] as const;
+
 describe("parseContestInfo", () => {
   it("preserves linked contest, staff, problem, and first-full metadata", () => {
     const parsed = parseContestInfo(markdown);
@@ -73,22 +161,24 @@ describe("parseContestInfo", () => {
     expect(parsed.problems[0]).toMatchObject({
       index: "A",
       title: "두 수열",
-      href: "https://doj.kr/ko/problems/342",
       tier: { label: "Bronze I", shortLabel: "B1" },
-    });
-    expect(parsed.problems[0].firstFull).toEqual({
-      handle: "jkrt",
-      rating: 2369,
-      href: "https://doj.kr/ko/user/cmorx2455005q5f7m2wqvcewh",
-      time: "0m 55s",
     });
     expect(parsed.problems[8]).toMatchObject({
       index: "I",
-      href: "https://doj.kr/ko/problems/350",
       tier: { label: "Diamond II", shortLabel: "D2" },
     });
-    expect(parsed.problems[8].firstFull).toBeNull();
   });
+
+  it.each(linkedProblemCases)(
+    "preserves problem $index linked profile metadata exactly",
+    ({ index, href, firstFull }) => {
+      const parsed = parseContestInfo(markdown);
+      const problem = parsed.problems.find((candidate) => candidate.index === index);
+
+      expect(problem?.href).toBe(href);
+      expect(problem?.firstFull).toEqual(firstFull);
+    },
+  );
 
   it("normalizes the window participation type without changing its schedule", () => {
     const result = parseContestInfo(markdown.replace("대회 참가 타입: 일반", "대회 참가 타입: window"));
@@ -133,6 +223,47 @@ describe("parseContestInfo", () => {
     const invalidMarkdown = markdown.replace("[admin, 1352]", `[admin, ${rating}]`);
 
     expect(() => parseContestInfo(invalidMarkdown)).toThrow(/contest_info\.md: .*총괄/);
+  });
+
+  it("rejects an unsafe-integer profile rating", () => {
+    const invalidMarkdown = markdown.replace(
+      "[admin, 1352]",
+      "[admin, 9007199254740992]",
+    );
+
+    expect(() => parseContestInfo(invalidMarkdown)).toThrow(
+      /contest_info\.md: field "총괄" has invalid rating "9007199254740992"/,
+    );
+  });
+
+  it.each(["admin staff", "[admin", "<admin>", "admin*"])(
+    "rejects invalid staff handle %s with field context",
+    (handle) => {
+      const invalidMarkdown = markdown.replace("[admin, 1352]", `[${handle}, 1352]`);
+
+      expect(() => parseContestInfo(invalidMarkdown)).toThrow(
+        /contest_info\.md: field "총괄" has invalid handle/,
+      );
+    },
+  );
+
+  it.each(["jk rt", "*jkrt*", "<jkrt>"])(
+    "rejects invalid first-full handle %s with problem context",
+    (handle) => {
+      const invalidMarkdown = markdown.replace("[jkrt, 2369]", `[${handle}, 2369]`);
+
+      expect(() => parseContestInfo(invalidMarkdown)).toThrow(
+        /contest_info\.md: problem A FF has invalid handle/,
+      );
+    },
+  );
+
+  it("accepts DOJ handles containing letters, digits, and underscores", () => {
+    const parsed = parseContestInfo(
+      markdown.replace("[admin, 1352]", "[rich_chanel4u, 1352]"),
+    );
+
+    expect(parsed.contest.director.handle).toBe("rich_chanel4u");
   });
 
   it("rejects a missing problem link", () => {

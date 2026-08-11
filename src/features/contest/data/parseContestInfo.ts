@@ -38,6 +38,7 @@ const TIER_LEVELS = {
 } as const;
 
 const EXPECTED_PROBLEM_INDICES = ["A", "B", "C", "D", "E", "F", "G", "H", "I"] as const;
+const DOJ_HANDLE_PATTERN = /^[A-Za-z0-9_]+$/;
 
 const DOJ_HREF_PATTERNS = {
   contest: /^https:\/\/doj\.kr\/ko\/contests\/[a-z0-9]+(?:-[a-z0-9]+)*$/,
@@ -238,10 +239,10 @@ function parseLinkedRatedUserParts(
   hrefSource: string,
   context: string,
 ): LinkedRatedUser {
-  const handle = handleSource.trim();
+  const handle = handleSource;
   const ratingText = ratingSource.trim();
-  if (handle.length === 0) {
-    throw invalidContestInfo(`${context} has an empty handle`);
+  if (!DOJ_HANDLE_PATTERN.test(handle)) {
+    throw invalidContestInfo(`${context} has invalid handle "${handle}"`);
   }
   if (!/^\d+$/.test(ratingText)) {
     throw invalidContestInfo(`${context} has invalid rating "${ratingText}"`);

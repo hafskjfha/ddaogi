@@ -47,19 +47,104 @@ describe("loadContestDashboard", () => {
           rating: 1352,
           href: "https://doj.kr/ko/user/cmo8c9i8g000gw1uq9yc30h8h",
         },
+        setter: {
+          handle: "lunarlity",
+          rating: 1280,
+          href: "https://doj.kr/ko/user/cmoh8o181003i89jvd67yd4ca",
+        },
       },
       ratedParticipantCount: 39,
     });
     expect(dashboard?.problems).toHaveLength(9);
-    expect(dashboard?.problems[0]).toMatchObject({
-      href: "https://doj.kr/ko/problems/342",
-      firstFull: {
-        handle: "jkrt",
-        rating: 2369,
-        href: "https://doj.kr/ko/user/cmorx2455005q5f7m2wqvcewh",
-        time: "0m 55s",
+    expect(
+      dashboard?.problems.map(({ index, href, firstFull }) => ({ index, href, firstFull })),
+    ).toEqual([
+      {
+        index: "A",
+        href: "https://doj.kr/ko/problems/342",
+        firstFull: {
+          handle: "jkrt",
+          rating: 2369,
+          href: "https://doj.kr/ko/user/cmorx2455005q5f7m2wqvcewh",
+          time: "0m 55s",
+        },
       },
-    });
+      {
+        index: "B",
+        href: "https://doj.kr/ko/problems/343",
+        firstFull: {
+          handle: "cenix820",
+          rating: 2052,
+          href: "https://doj.kr/ko/user/cmordu9f2001wse16r3jay8w4",
+          time: "1m 16s",
+        },
+      },
+      {
+        index: "C",
+        href: "https://doj.kr/ko/problems/344",
+        firstFull: {
+          handle: "RreShi",
+          rating: 1777,
+          href: "https://doj.kr/ko/user/cmozmyjdx00r111qkc0ecc12w",
+          time: "3m 54s",
+        },
+      },
+      {
+        index: "D",
+        href: "https://doj.kr/ko/problems/345",
+        firstFull: {
+          handle: "RreShi",
+          rating: 1777,
+          href: "https://doj.kr/ko/user/cmozmyjdx00r111qkc0ecc12w",
+          time: "7m 29s",
+        },
+      },
+      {
+        index: "E",
+        href: "https://doj.kr/ko/problems/346",
+        firstFull: {
+          handle: "RreShi",
+          rating: 1777,
+          href: "https://doj.kr/ko/user/cmozmyjdx00r111qkc0ecc12w",
+          time: "10m 36s",
+        },
+      },
+      {
+        index: "F",
+        href: "https://doj.kr/ko/problems/347",
+        firstFull: {
+          handle: "plast",
+          rating: 2286,
+          href: "https://doj.kr/ko/user/cmolny8hj0053unpdl5zz2rqc",
+          time: "32m 31s",
+        },
+      },
+      {
+        index: "G",
+        href: "https://doj.kr/ko/problems/348",
+        firstFull: {
+          handle: "RreShi",
+          rating: 1777,
+          href: "https://doj.kr/ko/user/cmozmyjdx00r111qkc0ecc12w",
+          time: "19m 0s",
+        },
+      },
+      {
+        index: "H",
+        href: "https://doj.kr/ko/problems/349",
+        firstFull: {
+          handle: "platter",
+          rating: 2603,
+          href: "https://doj.kr/ko/user/cmps2k3v300kdeog07f22z0pz",
+          time: "61m 18s",
+        },
+      },
+      {
+        index: "I",
+        href: "https://doj.kr/ko/problems/350",
+        firstFull: null,
+      },
+    ]);
   });
 
   it("names the scoreboard source when JSON syntax is invalid", async () => {
