@@ -1,6 +1,6 @@
 import { ArrowRight, Bird, CircleAlert, Trophy, UserRoundSearch } from "lucide-react";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/Card";
 
 const USER_DEMO_HREF = "/users/jtw7913";
 const CONTEST_DEMO_HREF = "/contests/doj-beginner-contest-4";
@@ -24,13 +24,13 @@ export default function Home() {
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
               href={USER_DEMO_HREF}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-slate-900 px-5 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-slate-900 px-5 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200 dark:focus-visible:ring-slate-300 dark:focus-visible:ring-offset-slate-950"
             >
               유저 분석 데모 보기 <ArrowRight aria-hidden="true" className="size-4" />
             </Link>
             <Link
               href={CONTEST_DEMO_HREF}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-5 text-sm font-medium text-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-50 dark:hover:bg-slate-900"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-5 text-sm font-medium text-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-50 dark:hover:bg-slate-900 dark:focus-visible:ring-slate-300 dark:focus-visible:ring-offset-slate-950"
             >
               대회 분석 데모 보기 <ArrowRight aria-hidden="true" className="size-4" />
             </Link>
@@ -40,7 +40,7 @@ export default function Home() {
           <CardHeader className="flex-row items-start gap-3">
             <CircleAlert aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-amber-700 dark:text-amber-300" />
             <div className="space-y-1.5">
-              <CardTitle>이용 전 확인해 주세요</CardTitle>
+              <h2 className="text-lg font-semibold leading-none tracking-tight">이용 전 확인해 주세요</h2>
               <CardDescription className="text-amber-900 dark:text-amber-200">
                 따오기는 DOJ에서 운영하는 공식 사이트가 아닌 유저가 만든 자작 사이트입니다.
               </CardDescription>
@@ -55,14 +55,14 @@ export default function Home() {
         <Card>
           <CardHeader>
             <UserRoundSearch aria-hidden="true" className="size-5 text-blue-600" />
-            <CardTitle>유저 분석</CardTitle>
+            <h2 className="text-lg font-semibold leading-none tracking-tight">유저 분석</h2>
             <CardDescription>레이팅, 문제 풀이, 대회 기록을 입체적으로 확인합니다.</CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader>
             <Trophy aria-hidden="true" className="size-5 text-blue-600" />
-            <CardTitle>대회 분석</CardTitle>
+            <h2 className="text-lg font-semibold leading-none tracking-tight">대회 분석</h2>
             <CardDescription>참가자 레이팅 분포와 문제별 결과를 비교합니다.</CardDescription>
           </CardHeader>
         </Card>

@@ -10,6 +10,10 @@ describe("Home", () => {
     expect(screen.getByText(/DOJ에서 운영하는 공식 사이트가 아닌/)).toBeInTheDocument();
     expect(screen.getByText(/2026\.08\.11 오전 2시/)).toBeInTheDocument();
     expect(screen.getByText(/실시간 데이터가 아닙니다/)).toBeInTheDocument();
+
+    for (const name of ["이용 전 확인해 주세요", "유저 분석", "대회 분석"]) {
+      expect(screen.getByRole("heading", { name, level: 2 })).toBeInTheDocument();
+    }
   });
 
   it("links directly to both detail demos", () => {
@@ -23,5 +27,17 @@ describe("Home", () => {
       "href",
       "/contests/doj-beginner-contest-4",
     );
+  });
+
+  it("keeps demo links visibly focused in dark mode", () => {
+    render(<Home />);
+
+    for (const name of ["유저 분석 데모 보기", "대회 분석 데모 보기"]) {
+      expect(screen.getByRole("link", { name })).toHaveClass(
+        "focus-visible:ring-offset-2",
+        "dark:focus-visible:ring-slate-300",
+        "dark:focus-visible:ring-offset-slate-950",
+      );
+    }
   });
 });

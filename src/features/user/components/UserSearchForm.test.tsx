@@ -33,4 +33,19 @@ describe("UserSearchForm", () => {
     expect(pushMock).not.toHaveBeenCalled();
     expect(screen.getByRole("alert")).toHaveTextContent("현재는 jtw7913만 검색할 수 있어요.");
   });
+
+  it("clears submitted invalid state when the query is edited", async () => {
+    const user = userEvent.setup();
+    render(<UserSearchForm />);
+
+    const input = screen.getByRole("textbox", { name: "유저 핸들" });
+    await user.click(screen.getByRole("button", { name: "검색" }));
+    expect(input).toHaveAttribute("aria-invalid", "true");
+
+    await user.type(input, "j");
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(input).toHaveAttribute("aria-invalid", "false");
+    expect(input).not.toHaveAttribute("aria-describedby");
+  });
 });

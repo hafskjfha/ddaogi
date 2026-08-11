@@ -7,7 +7,9 @@ describe("ContestList", () => {
   it("shows the supported contest and disabled pagination controls on its only page", () => {
     render(<ContestList page={paginateContests(CONTEST_CATALOG, 1)} />);
 
-    expect(screen.getByRole("heading", { name: "DOJ Beginner Contest 4" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "DOJ Beginner Contest 4", level: 2 }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "상세 분석 보기" })).toHaveAttribute(
       "href",
       "/contests/doj-beginner-contest-4",
@@ -30,5 +32,21 @@ describe("ContestList", () => {
     expect(
       screen.getByRole("button", { name: "다음 페이지" }).querySelector("svg[aria-hidden='true']"),
     ).not.toBeNull();
+  });
+
+  it("stacks the page status above full-width pagination controls on mobile", () => {
+    render(<ContestList page={paginateContests(CONTEST_CATALOG, 1)} />);
+
+    expect(screen.getByRole("navigation", { name: "대회 목록 페이지" })).toHaveClass(
+      "grid",
+      "w-full",
+      "grid-cols-2",
+      "sm:flex",
+    );
+    expect(screen.getByText("1 / 1 페이지")).toHaveClass("col-span-2", "sm:order-2");
+
+    for (const name of ["이전 페이지", "다음 페이지"]) {
+      expect(screen.getByRole("button", { name })).toHaveClass("w-full", "sm:w-auto");
+    }
   });
 });

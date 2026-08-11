@@ -39,7 +39,10 @@ export function UserSearchForm() {
           aria-invalid={Boolean(error)}
           className="h-11 rounded-lg border border-slate-300 bg-white px-3 text-slate-950 outline-none transition-colors placeholder:text-slate-400 focus:border-slate-950 focus:ring-2 focus:ring-slate-950 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-50 dark:focus:border-slate-300 dark:focus:ring-slate-300"
           id="user-handle"
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setError(null);
+          }}
           placeholder="jtw7913"
           type="text"
           value={query}

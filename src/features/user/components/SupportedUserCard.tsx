@@ -1,6 +1,6 @@
 import { ArrowRight, UserRound } from "lucide-react";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import type { SupportedUserSummary } from "@/features/user/data/userCatalog";
 
 interface SupportedUserCardProps {
@@ -14,8 +14,11 @@ export function SupportedUserCard({ user }: SupportedUserCardProps) {
       <CardHeader className="flex-row items-start gap-3">
         <UserRound aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-blue-600 dark:text-blue-400" />
         <div className="space-y-1">
-          <CardTitle>{user.handle}</CardTitle>
+          <h2 className="text-lg font-semibold leading-none tracking-tight">{user.handle}</h2>
           <p className="text-sm font-medium text-blue-700 dark:text-blue-300">{user.title}</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            현재 이용 가능한 데모 프로필입니다. 현재는 jtw7913만 제공됩니다.
+          </p>
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
