@@ -12,6 +12,7 @@ import {
   type TooltipContentProps,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { RatingDelta, RatingText } from "@/components/RatingText";
 import { getRatingBand, RATING_BANDS } from "@/domain/rating";
 import type { ContestParticipation } from "@/features/user/model/types";
 
@@ -36,6 +37,10 @@ function formatKoreanDate(date: string): string {
 function formatSigned(value: number | null): string {
   if (value === null) return "-";
   return value > 0 ? `+${value}` : String(value);
+}
+
+function formatRating(rating: number): string {
+  return rating.toLocaleString("en-US");
 }
 
 function pointSummary(point: ChartPoint): string {
@@ -65,15 +70,27 @@ function RatingTooltip({ active, payload }: TooltipContentProps) {
       </p>
       <dl className="mt-2 grid grid-cols-[auto_auto] gap-x-4 gap-y-1">
         <dt>레이팅</dt>
-        <dd className="text-right font-medium">{point.ratingAfter}</dd>
+        <dd className="text-right font-medium">
+          <RatingText rating={point.ratingAfter}>{formatRating(point.ratingAfter)}</RatingText>
+        </dd>
         <dt>변동</dt>
-        <dd className="text-right font-medium">{formatSigned(point.ratingDiff)}</dd>
+        <dd className="text-right font-medium">
+          <RatingDelta value={point.ratingDiff} />
+        </dd>
         <dt>순위</dt>
         <dd className="text-right font-medium">
           {point.rank === null ? "-" : `${point.rank}위`}
         </dd>
         <dt>퍼포먼스</dt>
-        <dd className="text-right font-medium">{point.performanceRating ?? "-"}</dd>
+        <dd className="text-right font-medium">
+          {point.performanceRating === null ? (
+            <RatingDelta value={null} />
+          ) : (
+            <RatingText rating={point.performanceRating}>
+              {formatRating(point.performanceRating)}
+            </RatingText>
+          )}
+        </dd>
       </dl>
     </div>
   );

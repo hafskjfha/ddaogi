@@ -83,7 +83,7 @@ describe("RatingOverview", () => {
     expect(within(summary).getByText(/DOJ Contest 3/)).toHaveTextContent(
       "DOJ Contest 3 · 2026년 6월 14일 · 레이팅 1368 · 변동 +168 · 순위 23위 · 퍼포먼스 1871",
     );
-    const unratedRow = screen.getByRole("row", { name: /2026\.06\.07 67 Contest 11 - 1200 - -/ });
+    const unratedRow = screen.getByRole("row", { name: /2026\.06\.07 67 Contest 11 - 1,200 - -/ });
     expect(unratedRow).toBeInTheDocument();
     expect(within(unratedRow).getAllByText("-")).toHaveLength(3);
   });
@@ -104,7 +104,7 @@ describe("RatingOverview", () => {
       clientY: Number(firstDot!.getAttribute("cy")),
     });
     expect(await screen.findByRole("tooltip", { hidden: true })).toHaveTextContent(
-      "초기 레이팅날짜 -레이팅1200변동-순위-퍼포먼스-",
+      "초기 레이팅날짜 -레이팅1,200변동-순위-퍼포먼스-",
     );
 
     await user.click(screen.getByRole("button", { name: "퍼포먼스 보기" }));
@@ -116,6 +116,63 @@ describe("RatingOverview", () => {
     expect(within(performanceSummary).getAllByRole("listitem")).toHaveLength(2);
     expect(within(performanceSummary).queryByText(/67 Contest/)).not.toBeInTheDocument();
     expect(within(performanceSummary).queryByText(/퍼포먼스 -/)).not.toBeInTheDocument();
+  });
+
+  it("colors chart and contest rating details by their independent semantics", async () => {
+    const dashboard = {
+      ...userDashboardFixture,
+      ratingHistory: [
+        userDashboardFixture.ratingHistory[0],
+        {
+          ...userDashboardFixture.ratingHistory[2],
+          tierBefore: "NEWBIE" as const,
+          tierAfter: "SPECIALIST" as const,
+        },
+        {
+          date: "2026-07-15",
+          name: "Negative Contest",
+          rank: 19,
+          performanceRating: 1421,
+          ratingDiff: -8,
+          ratingAfter: 1421,
+          rated: true,
+          tierBefore: "EXPERT" as const,
+          tierAfter: "SPECIALIST" as const,
+        },
+      ],
+    };
+    const { container } = render(<RatingOverview dashboard={dashboard} />);
+
+    const dots = container.querySelectorAll<SVGCircleElement>(".recharts-line-dot");
+    fireEvent.mouseMove(dots[1], {
+      clientX: Number(dots[1].getAttribute("cx")),
+      clientY: Number(dots[1].getAttribute("cy")),
+    });
+    const tooltip = await screen.findByRole("tooltip", { hidden: true });
+    expect(within(tooltip).getByText("1,429")).toHaveClass("text-teal-700", "dark:text-teal-400");
+    expect(within(tooltip).getByText("1,587")).toHaveClass("text-teal-700", "dark:text-teal-400");
+    expect(within(tooltip).getByText("+53")).toHaveClass("text-emerald-700", "dark:text-emerald-400");
+
+    const positiveRow = screen.getByRole("row", { name: /DOJ Beginner Contest 4/ });
+    expect(within(positiveRow).getByText("1,587")).toHaveClass("text-teal-700", "dark:text-teal-400");
+    expect(within(positiveRow).getByText("1,429")).toHaveClass("text-teal-700", "dark:text-teal-400");
+    expect(within(positiveRow).getByText("+53")).toHaveClass("text-emerald-700", "dark:text-emerald-400");
+    expect(within(positiveRow).getByText("NEWBIE")).toHaveClass("text-slate-700", "dark:text-slate-300");
+    expect(within(positiveRow).getByText("SPECIALIST")).toHaveClass(
+      "text-teal-700",
+      "dark:text-teal-400",
+    );
+    expect(
+      within(within(positiveRow).getByRole("cell", { name: "NEWBIE→SPECIALIST" })).getByText("→"),
+    ).toHaveClass("text-slate-500", "dark:text-slate-400");
+
+    const negativeRow = screen.getByRole("row", { name: /Negative Contest/ });
+    expect(within(negativeRow).getByText("-8")).toHaveClass("text-red-700", "dark:text-red-400");
+
+    const unratedRow = screen.getByRole("row", { name: /67 Contest/ });
+    for (const unavailableValue of within(unratedRow).getAllByText("-")) {
+      expect(unavailableValue).toHaveClass("text-slate-500", "dark:text-slate-400");
+    }
   });
 
   it("keeps empty and one-rated-event chart domains usable", async () => {

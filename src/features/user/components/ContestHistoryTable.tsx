@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { RatingDelta, RatingText, RatingTitleText } from "@/components/RatingText";
 import type { ContestParticipation } from "@/features/user/model/types";
 
 function formatDate(date: string): string {
@@ -6,9 +7,8 @@ function formatDate(date: string): string {
   return `${year}.${month}.${day}`;
 }
 
-function formatSigned(value: number | null): string {
-  if (value === null) return "-";
-  return value > 0 ? `+${value}` : String(value);
+function formatRating(rating: number): string {
+  return rating.toLocaleString("en-US");
 }
 
 /** Lists contest participation details in reverse chronological order. */
@@ -34,24 +34,61 @@ export function ContestHistoryTable({ history }: { history: readonly ContestPart
             </tr>
           </thead>
           <tbody>
-            {contests.map((contest) => (
-              <tr
-                key={`${contest.date}-${contest.name}`}
-                className="border-b border-slate-100 last:border-0 dark:border-slate-900"
-              >
-                <td className="whitespace-nowrap px-3 py-3">{formatDate(contest.date)}</td>
-                <td className="px-3 py-3 font-medium">{contest.name}</td>
-                <td className="px-3 py-3 text-right">{contest.rank}</td>
-                <td className="px-3 py-3 text-right">{contest.performanceRating ?? "-"}</td>
-                <td className="px-3 py-3 text-right">{contest.ratingAfter}</td>
-                <td className="px-3 py-3 text-right">{formatSigned(contest.ratingDiff)}</td>
-                <td className="whitespace-nowrap px-3 py-3">
-                  {contest.tierBefore === contest.tierAfter
-                    ? "-"
-                    : `${contest.tierBefore} → ${contest.tierAfter}`}
-                </td>
-              </tr>
-            ))}
+            {contests.map((contest) => {
+              const ratingBefore =
+                contest.rated && contest.ratingDiff !== null
+                  ? contest.ratingAfter - contest.ratingDiff
+                  : null;
+
+              return (
+                <tr
+                  key={`${contest.date}-${contest.name}`}
+                  className="border-b border-slate-100 last:border-0 dark:border-slate-900"
+                >
+                  <td className="whitespace-nowrap px-3 py-3">{formatDate(contest.date)}</td>
+                  <td className="px-3 py-3 font-medium">{contest.name}</td>
+                  <td className="px-3 py-3 text-right">{contest.rank}</td>
+                  <td className="px-3 py-3 text-right">
+                    {contest.performanceRating === null ? (
+                      <RatingDelta value={null} />
+                    ) : (
+                      <RatingText rating={contest.performanceRating}>
+                        {formatRating(contest.performanceRating)}
+                      </RatingText>
+                    )}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3 text-right">
+                    {ratingBefore === null ? (
+                      <RatingText rating={contest.ratingAfter}>
+                        {formatRating(contest.ratingAfter)}
+                      </RatingText>
+                    ) : (
+                      <>
+                        <RatingText rating={ratingBefore}>{formatRating(ratingBefore)}</RatingText>
+                        <span className="text-slate-500 dark:text-slate-400"> → </span>
+                        <RatingText rating={contest.ratingAfter}>
+                          {formatRating(contest.ratingAfter)}
+                        </RatingText>
+                      </>
+                    )}
+                  </td>
+                  <td className="px-3 py-3 text-right">
+                    <RatingDelta value={contest.ratingDiff} />
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {contest.tierBefore === contest.tierAfter ? (
+                      <RatingDelta value={null} />
+                    ) : (
+                      <>
+                        <RatingTitleText title={contest.tierBefore}>{contest.tierBefore}</RatingTitleText>
+                        <span className="text-slate-500 dark:text-slate-400"> → </span>
+                        <RatingTitleText title={contest.tierAfter}>{contest.tierAfter}</RatingTitleText>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </CardContent>
