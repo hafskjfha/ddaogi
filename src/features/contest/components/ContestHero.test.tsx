@@ -54,8 +54,14 @@ describe("ContestHero", () => {
 
   it("allows long title, organizer, and metadata values to shrink and wrap on mobile", () => {
     const longTitle = "DOJBeginnerContestWithAnIntentionallyLongUnbrokenTitle";
-    const longDirector = "directorWithAnIntentionallyLongUnbrokenHandle";
-    const longSetter = "setterWithAnIntentionallyLongUnbrokenHandle";
+    const longDirector = {
+      ...contestDashboardFixture.contest.director,
+      handle: "directorWithAnIntentionallyLongUnbrokenHandle",
+    };
+    const longSetter = {
+      ...contestDashboardFixture.contest.setter,
+      handle: "setterWithAnIntentionallyLongUnbrokenHandle",
+    };
     const longStartLabel = "2026년7월8일오후9시정각부터시작하는아주긴대회시작문구";
     const longProblemOrder = "참가자가선택한난이도기준으로정렬하는아주긴정렬방식";
     const longContest: ContestSummary = {
@@ -70,8 +76,8 @@ describe("ContestHero", () => {
     render(<ContestHero contest={longContest} />);
 
     expect(screen.getByRole("heading", { name: longTitle })).toHaveClass("min-w-0", "break-words");
-    expect(screen.getByText(longDirector)).toHaveClass("min-w-0", "break-words");
-    expect(screen.getByText(longSetter)).toHaveClass("min-w-0", "break-words");
+    expect(screen.getByText(longDirector.handle)).toHaveClass("min-w-0", "break-words");
+    expect(screen.getByText(longSetter.handle)).toHaveClass("min-w-0", "break-words");
     expect(screen.getByText(longStartLabel)).toHaveClass("min-w-0", "break-words");
     expect(screen.getByText(longProblemOrder)).toHaveClass("min-w-0", "break-words");
   });

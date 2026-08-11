@@ -36,11 +36,15 @@ export function ContestHero({ contest }: { contest: ContestSummary }) {
           <dl className="grid min-w-0 grid-cols-2 gap-3 text-sm sm:min-w-72 lg:w-72 lg:shrink-0">
             <div className="min-w-0 rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-slate-600 dark:text-slate-400">Director</dt>
-              <dd className="mt-1 min-w-0 break-words font-semibold">{contest.director}</dd>
+              <dd className="mt-1 min-w-0 break-words font-semibold">
+                {contest.director.handle}
+              </dd>
             </div>
             <div className="min-w-0 rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-slate-600 dark:text-slate-400">Setter</dt>
-              <dd className="mt-1 min-w-0 break-words font-semibold">{contest.setter}</dd>
+              <dd className="mt-1 min-w-0 break-words font-semibold">
+                {contest.setter.handle}
+              </dd>
             </div>
           </dl>
         </div>
@@ -105,7 +109,7 @@ export function ContestHero({ contest }: { contest: ContestSummary }) {
                 운영진
               </dt>
               <dd className="mt-1 min-w-0 break-words text-sm font-medium">
-                {contest.director} · {contest.setter}
+                {contest.director.handle} · {contest.setter.handle}
               </dd>
             </div>
           </div>

@@ -34,7 +34,10 @@ describe("ContestProblemAnalysis", () => {
       ...contestDashboardFixture.problems[0],
       index: "Z",
       title: "매우 긴 문제 제목도 작은 화면의 카드와 넓은 비교 표에서 접근 가능해야 합니다",
-      firstFullHandle: "a-very-long-first-full-score-handle-that-must-not-disappear",
+      firstFull: {
+        ...contestDashboardFixture.problems[0].firstFull!,
+        handle: "a-very-long-first-full-score-handle-that-must-not-disappear",
+      },
       tier: parseProblemTier("Ruby V"),
     };
 
@@ -45,7 +48,7 @@ describe("ContestProblemAnalysis", () => {
     });
     expect(within(row).getByText("R5")).toBeInTheDocument();
     expect(within(row).getByText(longProblem.title)).toBeInTheDocument();
-    expect(within(row).getByText(longProblem.firstFullHandle!)).toBeInTheDocument();
+    expect(within(row).getByText(longProblem.firstFull.handle)).toBeInTheDocument();
   });
 
   it("uses fluid desktop tracks and protected mobile content for long values", () => {

@@ -39,7 +39,7 @@ export function ContestProblemAnalysis({ problems }: { problems: readonly Contes
           </div>
           <div role="rowgroup" className="space-y-3 md:space-y-0">
             {problems.map((problem) => {
-              const hasFirstFull = problem.firstFullHandle !== null && problem.firstFullTime !== null;
+              const firstFull = problem.firstFull;
 
               return (
                 <div
@@ -71,14 +71,14 @@ export function ContestProblemAnalysis({ problems }: { problems: readonly Contes
                     <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 md:hidden">
                       첫 번째 만점
                     </span>
-                    {hasFirstFull ? (
+                    {firstFull ? (
                       <p className="mt-1 min-w-0 break-words text-sm font-medium md:mt-0">
-                        <span>{problem.firstFullHandle}</span>
+                        <span>{firstFull.handle}</span>
                         <span className="mx-1 text-slate-400" aria-hidden="true">
                           ·
                         </span>
                         <time className="font-mono text-xs text-slate-600 dark:text-slate-300">
-                          {problem.firstFullTime}
+                          {firstFull.time}
                         </time>
                       </p>
                     ) : (

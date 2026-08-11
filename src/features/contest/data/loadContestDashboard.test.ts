@@ -39,10 +39,27 @@ describe("loadContestDashboard", () => {
     const dashboard = await loadContestDashboard("doj-beginner-contest-4");
 
     expect(dashboard).toMatchObject({
-      contest: { slug: "doj-beginner-contest-4" },
+      contest: {
+        slug: "doj-beginner-contest-4",
+        href: "https://doj.kr/ko/contests/doj-beginner-contest-4",
+        director: {
+          handle: "admin",
+          rating: 1352,
+          href: "https://doj.kr/ko/user/cmo8c9i8g000gw1uq9yc30h8h",
+        },
+      },
       ratedParticipantCount: 39,
     });
     expect(dashboard?.problems).toHaveLength(9);
+    expect(dashboard?.problems[0]).toMatchObject({
+      href: "https://doj.kr/ko/problems/342",
+      firstFull: {
+        handle: "jkrt",
+        rating: 2369,
+        href: "https://doj.kr/ko/user/cmorx2455005q5f7m2wqvcewh",
+        time: "0m 55s",
+      },
+    });
   });
 
   it("names the scoreboard source when JSON syntax is invalid", async () => {
@@ -62,7 +79,7 @@ describe("loadContestDashboard", () => {
   });
 
   it("does not relabel contest-info parsing failures as scoreboard failures", async () => {
-    writeContestSources(markdown.replace("### I,", "### J,"), scoreboardText);
+    writeContestSources(markdown.replace("### [I,", "### [J,"), scoreboardText);
     let caughtError: Error | null = null;
 
     try {

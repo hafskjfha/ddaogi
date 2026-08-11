@@ -200,7 +200,7 @@ describe("contest analytics", () => {
     });
     expect(dashboard.problems[8]).toMatchObject({
       index: "I",
-      firstFullHandle: null,
+      firstFull: null,
       estimates: { score25: 2120, score50: 2190, score75: null, score100: null },
     });
   });

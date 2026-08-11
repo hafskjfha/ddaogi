@@ -19,14 +19,22 @@ export interface ScoreEstimates {
   readonly score100: number | null;
 }
 
+/** A DOJ profile reference with the rating supplied by the source. */
+export interface LinkedRatedUser {
+  readonly handle: string;
+  readonly rating: number;
+  readonly href: string;
+}
+
 /** Normalized contest identity, schedule, and administration metadata. */
 export interface ContestSummary {
   readonly slug: string;
   readonly title: string;
+  readonly href: string;
   readonly problemOrder: string;
   readonly ratedUpperBound: number;
-  readonly director: string;
-  readonly setter: string;
+  readonly director: LinkedRatedUser;
+  readonly setter: LinkedRatedUser;
   readonly startAt: string;
   readonly endAt: string;
   readonly startLabel: string;
@@ -49,9 +57,9 @@ export interface RatingDistribution {
 export interface ContestProblem {
   readonly index: string;
   readonly title: string;
+  readonly href: string;
   readonly tier: ProblemTier;
-  readonly firstFullHandle: string | null;
-  readonly firstFullTime: string | null;
+  readonly firstFull: (LinkedRatedUser & { readonly time: string }) | null;
   readonly estimates: ScoreEstimates;
 }
 

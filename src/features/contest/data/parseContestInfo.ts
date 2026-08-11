@@ -1,13 +1,17 @@
 import { parseProblemTier, type ProblemTier } from "@/domain/problemTier";
-import type { ContestSummary, ParticipationType } from "@/features/contest/model/types";
+import type {
+  ContestSummary,
+  LinkedRatedUser,
+  ParticipationType,
+} from "@/features/contest/model/types";
 
 /** Problem metadata parsed directly from the contest information file. */
 export interface ParsedContestProblem {
   readonly index: string;
   readonly title: string;
+  readonly href: string;
   readonly tier: ProblemTier;
-  readonly firstFullHandle: string | null;
-  readonly firstFullTime: string | null;
+  readonly firstFull: (LinkedRatedUser & { readonly time: string }) | null;
 }
 
 /** Contest metadata and problems parsed from the stable mock schema. */
@@ -34,6 +38,12 @@ const TIER_LEVELS = {
 } as const;
 
 const EXPECTED_PROBLEM_INDICES = ["A", "B", "C", "D", "E", "F", "G", "H", "I"] as const;
+
+const DOJ_HREF_PATTERNS = {
+  contest: /^https:\/\/doj\.kr\/ko\/contests\/[a-z0-9]+(?:-[a-z0-9]+)*$/,
+  problem: /^https:\/\/doj\.kr\/ko\/problems\/\d+$/,
+  user: /^https:\/\/doj\.kr\/ko\/user\/[A-Za-z0-9]+$/,
+} as const;
 
 /** Parses DOJ Beginner Contest 4's stable mock Markdown schema. */
 export function parseContestInfo(markdown: string): ParsedContestInfo {
@@ -64,11 +74,12 @@ function parseContestSummary(lines: readonly string[]): ContestSummary {
   }
 
   const title = titleMatch[1].trim();
+  const href = parseHref(getListValue(lines, "링크"), "contest", 'field "링크"');
   const problemOrder = getListValue(lines, "문제순서");
   const ratedUpperBoundSource = getListValue(lines, "레이티드 참가자 범위");
   const ratedUpperBoundMatch = /^~(\d+)$/.exec(ratedUpperBoundSource);
-  const director = getListValue(lines, "총괄");
-  const setter = getListValue(lines, "출제");
+  const director = parseLinkedRatedUser(getListValue(lines, "총괄"), 'field "총괄"');
+  const setter = parseLinkedRatedUser(getListValue(lines, "출제"), 'field "출제"');
   const startLabel = getListValue(lines, "대회 시작시간");
   const endLabel = getListValue(lines, "대회 종료시간");
   const participationType = parseParticipationType(getListValue(lines, "대회 참가 타입"));
@@ -85,6 +96,7 @@ function parseContestSummary(lines: readonly string[]): ContestSummary {
   return {
     slug: slugify(title),
     title,
+    href,
     problemOrder,
     ratedUpperBound: Number(ratedUpperBoundMatch[1]),
     director,
@@ -106,14 +118,17 @@ function parseProblems(lines: readonly string[]): readonly ParsedContestProblem[
 
   return problemHeadingIndices.map((headingIndex, blockIndex) => {
     const heading = lines[headingIndex].trim();
-    const headingMatch = /^###\s+([A-Z]),\s*(.*)$/.exec(heading);
+    const headingMatch = /^###\s+\[([A-Z]),\s*([^\]]*)\]\(([^()\s]+)\)$/.exec(heading);
 
     if (!headingMatch) {
-      throw invalidContestInfo(`invalid problem heading "${heading}"`);
+      const problemIndex = /^###\s+(?:\[)?([A-Z])(?:,|\])/.exec(heading)?.[1];
+      const context = problemIndex ? `problem ${problemIndex}` : `problem block ${blockIndex + 1}`;
+      throw invalidContestInfo(`${context} has invalid linked heading "${heading}"`);
     }
 
     const index = headingMatch[1];
     const title = headingMatch[2].trim();
+    const href = parseHref(headingMatch[3], "problem", `problem ${index}`);
     if (title.length === 0) {
       throw invalidContestInfo(`problem ${index} is missing its title`);
     }
@@ -130,8 +145,9 @@ function parseProblems(lines: readonly string[]): readonly ParsedContestProblem[
     return {
       index,
       title,
+      href,
       tier: parseTier(difficulty, index),
-      ...parseFirstFull(firstFull, index),
+      firstFull: parseFirstFull(firstFull, index),
     };
   });
 }
@@ -189,17 +205,69 @@ function parseTier(value: string, problemIndex: string): ProblemTier {
 function parseFirstFull(
   value: string,
   problemIndex: string,
-): Pick<ParsedContestProblem, "firstFullHandle" | "firstFullTime"> {
+): ParsedContestProblem["firstFull"] {
   if (value === "-") {
-    return { firstFullHandle: null, firstFullTime: null };
+    return null;
   }
 
-  const match = /^(\S+)\s+\((\d+m\s+\d+s)\)$/.exec(value);
+  const match = /^\[([^,\]\r\n]+),\s*([^\]\r\n]+)\]\(([^()\s]+)\)\s+\((\d+m\s+\d+s)\)$/.exec(
+    value,
+  );
   if (!match) {
-    throw invalidContestInfo(`problem ${problemIndex} has invalid FF "${value}"`);
+    throw invalidContestInfo(`problem ${problemIndex} has invalid FF Markdown "${value}"`);
   }
 
-  return { firstFullHandle: match[1], firstFullTime: match[2] };
+  return {
+    ...parseLinkedRatedUserParts(match[1], match[2], match[3], `problem ${problemIndex} FF`),
+    time: match[4],
+  };
+}
+
+function parseLinkedRatedUser(value: string, context: string): LinkedRatedUser {
+  const match = /^\[([^,\]\r\n]+),\s*([^\]\r\n]+)\]\(([^()\s]+)\)$/.exec(value);
+  if (!match) {
+    throw invalidContestInfo(`${context} has invalid linked user Markdown "${value}"`);
+  }
+
+  return parseLinkedRatedUserParts(match[1], match[2], match[3], context);
+}
+
+function parseLinkedRatedUserParts(
+  handleSource: string,
+  ratingSource: string,
+  hrefSource: string,
+  context: string,
+): LinkedRatedUser {
+  const handle = handleSource.trim();
+  const ratingText = ratingSource.trim();
+  if (handle.length === 0) {
+    throw invalidContestInfo(`${context} has an empty handle`);
+  }
+  if (!/^\d+$/.test(ratingText)) {
+    throw invalidContestInfo(`${context} has invalid rating "${ratingText}"`);
+  }
+
+  const rating = Number(ratingText);
+  if (!Number.isSafeInteger(rating)) {
+    throw invalidContestInfo(`${context} has invalid rating "${ratingText}"`);
+  }
+
+  return {
+    handle,
+    rating,
+    href: parseHref(hrefSource, "user", context),
+  };
+}
+
+function parseHref(
+  value: string,
+  kind: keyof typeof DOJ_HREF_PATTERNS,
+  context: string,
+): string {
+  if (!DOJ_HREF_PATTERNS[kind].test(value)) {
+    throw invalidContestInfo(`${context} has invalid ${kind} link "${value}"`);
+  }
+  return value;
 }
 
 function parseParticipationType(value: string): ParticipationType {
