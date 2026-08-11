@@ -19,20 +19,20 @@ DOJ 유저와 대회를 깊이 읽는 서드파티 분석 대시보드입니다.
 | 최신순 대회 이력, unrated·티어 변화 없음 표기 | `/users/jtw7913`의 `레이팅` 탭 | `data/user_info.md` | `src/features/user/components/ContestHistoryTable.tsx` |
 | 참가 대회 좌표 스트릭과 현재·최장 연속 | `/users/jtw7913`의 `레이팅` 탭 | `data/user_info.md` | `src/features/user/components/ContestStreak.tsx` |
 | 만점·미만 문제 목록, 난이도·점수 tooltip, DOJ 문제 링크 | `/users/jtw7913`의 `문제` 탭 | `data/result.json`, `data/difficulty.json` | `src/features/user/components/ProblemList.tsx` |
-| 문제 풀이 일자 스트릭, 총 만점 수·랭킹 제공 상태 | `/users/jtw7913`의 `문제` 탭 | `data/result.json` | `src/features/user/components/ProblemSolveStreak.tsx`, `ProblemOverview.tsx` |
-| U/B/S/G/P/D/R 난이도 분포와 세부 난이도 전환 | `/users/jtw7913`의 `문제` 탭 | `data/result.json`, `data/difficulty.json` | `src/features/user/components/DifficultyDistribution.tsx` |
+| KST 문제 풀이 일자 스트릭, 총 만점 수·랭킹, source 기반 문제 수 | `/users/jtw7913`의 `문제` 탭 | `data/result.json`, `data/problems.json` | `src/features/user/components/ProblemSolveStreak.tsx`, `ProblemOverview.tsx` |
+| U/B/S/G/P/D/R 난이도 분포와 세부 난이도 전환 | `/users/jtw7913`의 `문제` 탭 | `data/result.json`, `data/difficulty.json`, `data/problems.json` | `src/features/user/components/DifficultyDistribution.tsx` |
 | 언어별 제출, 총 제출·언어 수, 대회 1등·퍼솔 | `/users/jtw7913`의 `기타 정보` 탭 | `data/result.json`, `data/user_info.md` | `src/features/user/components/MoreOverview.tsx`, `LanguageDistribution.tsx` |
-| 대회 일정·제한 시간·rated 범위·운영진·일반/window 설명 | `/contests/doj-beginner-contest-4` | `data/contest_info.md` | `src/features/contest/components/ContestHero.tsx`, `ParticipationTypeTooltip.tsx` |
+| 대회 링크, 일정·제한 시간·rated 범위, 레이팅이 포함된 운영진 링크, 일반/window 설명 | `/contests/doj-beginner-contest-4` | `data/contest_info.md` | `src/features/contest/components/ContestHero.tsx`, `ParticipationTypeTooltip.tsx` |
 | rated 참가자 최솟값·Q1·중앙값·Q3·최댓값 | `/contests/doj-beginner-contest-4` | `data/contest_score_board.json` | `src/features/contest/components/RatingQuartiles.tsx` |
-| A–I 문제 난이도, FF와 없음 상태, 25/50/75/100% 예상 레이팅 | `/contests/doj-beginner-contest-4` | `data/contest_info.md`, `data/contest_score_board.json` | `src/features/contest/components/ContestProblemAnalysis.tsx`, `ScoreEstimateGrid.tsx` |
+| A–I 문제·FF 링크/레이팅, 없음 상태, rating band별 25/50/75/100% 예상 레이팅과 산출식 tooltip | `/contests/doj-beginner-contest-4` | `data/contest_info.md`, `data/contest_score_board.json` | `src/features/contest/components/ContestProblemAnalysis.tsx`, `ScoreEstimateGrid.tsx`, `ScoreEstimateHelp.tsx` |
 | 지원하지 않는 handle·slug의 한국어 404 | `/users/[handle]`, `/contests/[contestSlug]` | 지원 slug/handle 검사 | `src/app/not-found.tsx` |
 | 로딩 skeleton과 오류 재시도·지원 경로 복구 | `/users/[handle]`, `/contests/[contestSlug]` | 각 서버 loader | 각 동적 경로의 `loading.tsx`, `error.tsx` |
 
 ## 데이터 소스
 
-화면 데이터는 외부 API가 아니라 저장소의 `data/` 디렉터리에 있는 Markdown과 JSON 목 파일에서 읽습니다. 유저 대시보드는 `data/user_info.md`, `data/result.json`, `data/difficulty.json`을, 대회 대시보드는 `data/contest_info.md`, `data/contest_score_board.json`을 파싱하고 검증된 DTO로 정규화해 구성합니다.
+화면 데이터는 외부 API가 아니라 저장소의 `data/` 디렉터리에 있는 Markdown과 JSON 목 파일에서 읽습니다. 유저 대시보드는 `data/user_info.md`, `data/result.json`, `data/difficulty.json`, `data/problems.json`을, 대회 대시보드는 `data/contest_info.md`, `data/contest_score_board.json`을 파싱하고 검증된 DTO로 정규화해 구성합니다. 제출 시각은 원본 instant를 보존하면서 풀이 일자·일별 개수·스트릭 경계에는 `Asia/Seoul` 달력 날짜를 사용합니다. 대회·문제·운영진·FF URL과 운영진·FF 레이팅도 `contest_info.md`에서 종류별로 검증해 화면 링크와 색상에 반영합니다.
 
-문제별 예상 레이팅은 제공된 `data/contest_score_board.json`에서 각 점수 기준을 충족한 rated 참가자의 대회 전 레이팅 중앙값을 10 단위로 반올림한 추정치입니다. DOJ가 발표한 공식 레이팅이나 공식 문제 난이도가 아닙니다. 표본에 해당 참가자가 없으면 `-`로 표시하며, 숫자 추정치는 25%에서 100%까지 감소하지 않도록 보정합니다.
+문제별 예상 레이팅은 제공된 `data/contest_score_board.json`에서 각 25/50/75/100점 이상을 받은 rated 참가자의 대회 전 레이팅 중앙값을 10 단위로 반올림한 추정치입니다. DOJ가 발표한 공식 레이팅이나 공식 문제 난이도가 아닙니다. 표본에 해당 참가자가 없으면 `-`로 표시하며, 숫자 추정치는 25%에서 100%까지 감소하지 않도록 보정합니다. 같은 내용은 예상 레이팅 열의 키보드·포인터 접근 가능한 도움말에서도 확인할 수 있습니다.
 
 ## 개발 및 검증
 

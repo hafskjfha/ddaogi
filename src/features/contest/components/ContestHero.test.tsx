@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { ContestHero } from "@/features/contest/components/ContestHero";
@@ -6,6 +6,44 @@ import type { ContestSummary } from "@/features/contest/model/types";
 import { contestDashboardFixture } from "@/test/fixtures/contestDashboard";
 
 describe("ContestHero", () => {
+  it("links the contest and rated staff to their supplied DOJ destinations", () => {
+    render(<ContestHero contest={contestDashboardFixture.contest} />);
+
+    const contestLink = screen.getByRole("link", { name: contestDashboardFixture.contest.title });
+    expect(contestLink).toHaveAttribute("href", contestDashboardFixture.contest.href);
+    expect(contestLink).toHaveAttribute("target", "_blank");
+    expect(contestLink).toHaveAttribute("rel", "noreferrer");
+    expect(contestLink).toHaveClass("focus-visible:ring-2");
+
+    const directorLinks = screen.getAllByRole("link", {
+      name: contestDashboardFixture.contest.director.handle,
+    });
+    expect(directorLinks).toHaveLength(2);
+    for (const directorLink of directorLinks) {
+      expect(directorLink).toHaveAttribute("href", contestDashboardFixture.contest.director.href);
+      expect(directorLink).toHaveAttribute("target", "_blank");
+      expect(directorLink).toHaveAttribute("rel", "noreferrer");
+      expect(directorLink).toHaveClass("focus-visible:ring-2");
+      expect(
+        within(directorLink).getByText(contestDashboardFixture.contest.director.handle),
+      ).toHaveClass("text-green-700", "dark:text-green-400");
+    }
+
+    const setterLinks = screen.getAllByRole("link", {
+      name: contestDashboardFixture.contest.setter.handle,
+    });
+    expect(setterLinks).toHaveLength(2);
+    for (const setterLink of setterLinks) {
+      expect(setterLink).toHaveAttribute("href", contestDashboardFixture.contest.setter.href);
+      expect(setterLink).toHaveAttribute("target", "_blank");
+      expect(setterLink).toHaveAttribute("rel", "noreferrer");
+      expect(setterLink).toHaveClass("focus-visible:ring-2");
+      expect(
+        within(setterLink).getByText(contestDashboardFixture.contest.setter.handle),
+      ).toHaveClass("text-green-700", "dark:text-green-400");
+    }
+  });
+
   it("shows the normalized contest identity, schedule, format, and organizers", () => {
     render(<ContestHero contest={contestDashboardFixture.contest} />);
 
@@ -16,8 +54,8 @@ describe("ContestHero", () => {
     expect(screen.getByText("~2400 rated")).toBeInTheDocument();
     expect(screen.getByText("난이도순")).toBeInTheDocument();
     expect(screen.getByText("일반")).toBeInTheDocument();
-    expect(screen.getByText("admin")).toBeInTheDocument();
-    expect(screen.getByText("lunarlity")).toBeInTheDocument();
+    expect(screen.getAllByText("admin")).toHaveLength(2);
+    expect(screen.getAllByText("lunarlity")).toHaveLength(2);
   });
 
   it("explains both regular and window participation from a keyboard-focusable trigger", async () => {
@@ -76,8 +114,12 @@ describe("ContestHero", () => {
     render(<ContestHero contest={longContest} />);
 
     expect(screen.getByRole("heading", { name: longTitle })).toHaveClass("min-w-0", "break-words");
-    expect(screen.getByText(longDirector.handle)).toHaveClass("min-w-0", "break-words");
-    expect(screen.getByText(longSetter.handle)).toHaveClass("min-w-0", "break-words");
+    for (const directorLink of screen.getAllByRole("link", { name: longDirector.handle })) {
+      expect(directorLink).toHaveClass("min-w-0", "break-words");
+    }
+    for (const setterLink of screen.getAllByRole("link", { name: longSetter.handle })) {
+      expect(setterLink).toHaveClass("min-w-0", "break-words");
+    }
     expect(screen.getByText(longStartLabel)).toHaveClass("min-w-0", "break-words");
     expect(screen.getByText(longProblemOrder)).toHaveClass("min-w-0", "break-words");
   });

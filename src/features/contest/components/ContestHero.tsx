@@ -1,8 +1,12 @@
 import { CalendarDays, Clock3, Gauge, Users } from "lucide-react";
+import { RatingText } from "@/components/RatingText";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { ParticipationTypeTooltip } from "@/features/contest/components/ParticipationTypeTooltip";
-import type { ContestSummary } from "@/features/contest/model/types";
+import type { ContestSummary, LinkedRatedUser } from "@/features/contest/model/types";
+
+const EXTERNAL_LINK_CLASSES =
+  "min-w-0 break-words rounded-sm underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 dark:focus-visible:ring-slate-300 dark:focus-visible:ring-offset-slate-950";
 
 /** Presents a contest's identity, schedule, administration, and participation format. */
 export function ContestHero({ contest }: { contest: ContestSummary }) {
@@ -23,7 +27,14 @@ export function ContestHero({ contest }: { contest: ContestSummary }) {
               id="contest-title"
               className="min-w-0 break-words text-3xl font-black tracking-tight sm:text-4xl"
             >
-              {contest.title}
+              <a
+                href={contest.href}
+                target="_blank"
+                rel="noreferrer"
+                className={`inline-block max-w-full ${EXTERNAL_LINK_CLASSES}`}
+              >
+                {contest.title}
+              </a>
             </h1>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
               문제 정렬 ·{" "}
@@ -37,13 +48,13 @@ export function ContestHero({ contest }: { contest: ContestSummary }) {
             <div className="min-w-0 rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-slate-600 dark:text-slate-400">Director</dt>
               <dd className="mt-1 min-w-0 break-words font-semibold">
-                {contest.director.handle}
+                <RatedStaffLink user={contest.director} />
               </dd>
             </div>
             <div className="min-w-0 rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-slate-600 dark:text-slate-400">Setter</dt>
               <dd className="mt-1 min-w-0 break-words font-semibold">
-                {contest.setter.handle}
+                <RatedStaffLink user={contest.setter} />
               </dd>
             </div>
           </dl>
@@ -109,12 +120,29 @@ export function ContestHero({ contest }: { contest: ContestSummary }) {
                 운영진
               </dt>
               <dd className="mt-1 min-w-0 break-words text-sm font-medium">
-                {contest.director.handle} · {contest.setter.handle}
+                <RatedStaffLink user={contest.director} />
+                <span className="mx-1 text-slate-400" aria-hidden="true">
+                  ·
+                </span>
+                <RatedStaffLink user={contest.setter} />
               </dd>
             </div>
           </div>
         </dl>
       </div>
     </Card>
+  );
+}
+
+function RatedStaffLink({ user }: { user: LinkedRatedUser }) {
+  return (
+    <a
+      href={user.href}
+      target="_blank"
+      rel="noreferrer"
+      className={`inline-block max-w-full ${EXTERNAL_LINK_CLASSES}`}
+    >
+      <RatingText rating={user.rating}>{user.handle}</RatingText>
+    </a>
   );
 }

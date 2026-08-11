@@ -1,3 +1,4 @@
+import { RatingText } from "@/components/RatingText";
 import type { ScoreEstimates } from "@/features/contest/model/types";
 
 const ESTIMATE_CELLS = [
@@ -21,7 +22,11 @@ export function ScoreEstimateGrid({ estimates }: { estimates: ScoreEstimates }) 
           >
             <dt className="text-[11px] leading-4 text-slate-500 dark:text-slate-400">{label}</dt>
             <dd className="font-mono text-xs font-bold tabular-nums">
-              {value === null ? "-" : value.toLocaleString("ko-KR")}
+              {value === null ? (
+                <span className="text-slate-500 dark:text-slate-400">-</span>
+              ) : (
+                <RatingText rating={value}>{value.toLocaleString("ko-KR")}</RatingText>
+              )}
             </dd>
           </div>
         );

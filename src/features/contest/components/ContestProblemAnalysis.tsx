@@ -1,4 +1,6 @@
+import { RatingText } from "@/components/RatingText";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
+import { ScoreEstimateHelp } from "@/features/contest/components/ScoreEstimateHelp";
 import { ScoreEstimateGrid } from "@/features/contest/components/ScoreEstimateGrid";
 import type { ContestProblem } from "@/features/contest/model/types";
 import type { ProblemTierGroup } from "@/domain/problemTier";
@@ -16,6 +18,9 @@ const TIER_BADGE_CLASSES: Record<ProblemTierGroup, string> = {
 const DESKTOP_COLUMN_GRID =
   "md:grid-cols-[minmax(0,1.25fr)_minmax(0,.45fr)_minmax(0,.8fr)_minmax(0,1fr)]";
 
+const EXTERNAL_LINK_CLASSES =
+  "min-w-0 break-words rounded-sm text-slate-950 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 dark:text-slate-50 dark:focus-visible:ring-slate-300 dark:focus-visible:ring-offset-slate-950";
+
 /** Compares problem difficulty, first full-score results, and score estimates. */
 export function ContestProblemAnalysis({ problems }: { problems: readonly ContestProblem[] }) {
   return (
@@ -30,12 +35,21 @@ export function ContestProblemAnalysis({ problems }: { problems: readonly Contes
         <div role="table" aria-label="문제별 난이도와 점수 추정치" className="w-full">
           <div
             role="row"
-            className={`sr-only md:not-sr-only md:grid ${DESKTOP_COLUMN_GRID} md:gap-4 md:px-4 md:pb-2 md:text-left md:text-xs md:font-semibold md:tracking-wide md:text-slate-500 md:dark:text-slate-400`}
+            className={`grid ${DESKTOP_COLUMN_GRID} gap-y-2 px-4 pb-2 text-left text-xs font-semibold tracking-wide text-slate-500 dark:text-slate-400 md:gap-4`}
           >
-            <span role="columnheader">문제</span>
-            <span role="columnheader">난이도</span>
-            <span role="columnheader">첫 번째 만점</span>
-            <span role="columnheader">점수별 예상 레이팅</span>
+            <span role="columnheader" className="sr-only md:not-sr-only">
+              문제
+            </span>
+            <span role="columnheader" className="sr-only md:not-sr-only">
+              난이도
+            </span>
+            <span role="columnheader" className="sr-only md:not-sr-only">
+              첫 번째 만점
+            </span>
+            <span role="columnheader" className="flex items-center gap-1.5">
+              <span>점수별 예상 레이팅</span>
+              <ScoreEstimateHelp />
+            </span>
           </div>
           <div role="rowgroup" className="space-y-3 md:space-y-0">
             {problems.map((problem) => {
@@ -54,7 +68,14 @@ export function ContestProblemAnalysis({ problems }: { problems: readonly Contes
                     </span>
                     <p className="min-w-0 break-words font-semibold text-slate-950 dark:text-slate-50">
                       <span className="me-2 text-slate-500 dark:text-slate-400">{problem.index}</span>
-                      {problem.title}
+                      <a
+                        href={problem.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={EXTERNAL_LINK_CLASSES}
+                      >
+                        {problem.title}
+                      </a>
                     </p>
                   </div>
                   <div role="cell" className="min-w-0">
@@ -73,7 +94,14 @@ export function ContestProblemAnalysis({ problems }: { problems: readonly Contes
                     </span>
                     {firstFull ? (
                       <p className="mt-1 min-w-0 break-words text-sm font-medium md:mt-0">
-                        <span>{firstFull.handle}</span>
+                        <a
+                          href={firstFull.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={EXTERNAL_LINK_CLASSES}
+                        >
+                          <RatingText rating={firstFull.rating}>{firstFull.handle}</RatingText>
+                        </a>
                         <span className="mx-1 text-slate-400" aria-hidden="true">
                           ·
                         </span>
@@ -83,7 +111,7 @@ export function ContestProblemAnalysis({ problems }: { problems: readonly Contes
                       </p>
                     ) : (
                       <p className="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300 md:mt-0">
-                        아직 없음
+                        없음
                       </p>
                     )}
                   </div>

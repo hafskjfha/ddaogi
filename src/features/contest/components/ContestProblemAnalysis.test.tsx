@@ -1,4 +1,5 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { ContestProblemAnalysis } from "@/features/contest/components/ContestProblemAnalysis";
 import { parseProblemTier } from "@/domain/problemTier";
@@ -14,7 +15,24 @@ describe("ContestProblemAnalysis", () => {
 
     const row = screen.getByRole("row", { name: "A 두 수열" });
     expect(within(row).getByText("B1")).toBeInTheDocument();
-    expect(within(row).getByText("jkrt")).toBeInTheDocument();
+    const problemLink = within(row).getByRole("link", { name: "두 수열" });
+    expect(problemLink).toHaveAttribute("href", contestDashboardFixture.problems[0].href);
+    expect(problemLink).toHaveAttribute("target", "_blank");
+    expect(problemLink).toHaveAttribute("rel", "noreferrer");
+    expect(problemLink).toHaveClass("focus-visible:ring-2");
+
+    const firstFullLink = within(row).getByRole("link", { name: "jkrt" });
+    expect(firstFullLink).toHaveAttribute(
+      "href",
+      contestDashboardFixture.problems[0].firstFull?.href,
+    );
+    expect(firstFullLink).toHaveAttribute("target", "_blank");
+    expect(firstFullLink).toHaveAttribute("rel", "noreferrer");
+    expect(firstFullLink).toHaveClass("focus-visible:ring-2");
+    expect(within(firstFullLink).getByText("jkrt")).toHaveClass(
+      "text-red-700",
+      "dark:text-red-400",
+    );
     expect(within(row).getByText("0m 55s")).toBeInTheDocument();
     expect(within(row).getByText("25%")).toBeInTheDocument();
     expect(within(row).getByText("50%")).toBeInTheDocument();
@@ -25,8 +43,67 @@ describe("ContestProblemAnalysis", () => {
 
     const unansweredRow = screen.getByRole("row", { name: "I 직사각형 2" });
     expect(within(unansweredRow).getByText("D2")).toBeInTheDocument();
-    expect(within(unansweredRow).getByText("아직 없음")).toBeInTheDocument();
+    expect(within(unansweredRow).getByRole("link", { name: "직사각형 2" })).toHaveAttribute(
+      "href",
+      contestDashboardFixture.problems[1].href,
+    );
+    expect(within(unansweredRow).getByText("없음")).toBeInTheDocument();
+    expect(within(unansweredRow).queryByText("아직 없음")).not.toBeInTheDocument();
     expect(within(unansweredRow).getAllByText("-")).toHaveLength(2);
+  });
+
+  it("links every supplied problem and present first-full profile safely", () => {
+    render(<ContestProblemAnalysis problems={contestDashboardFixture.problems} />);
+
+    for (const problem of contestDashboardFixture.problems) {
+      const problemLink = screen.getByRole("link", { name: problem.title });
+      expect(problemLink).toHaveAttribute("href", problem.href);
+      expect(problemLink).toHaveAttribute("target", "_blank");
+      expect(problemLink).toHaveAttribute("rel", "noreferrer");
+
+      if (problem.firstFull) {
+        const firstFullLink = screen.getByRole("link", { name: problem.firstFull.handle });
+        expect(firstFullLink).toHaveAttribute("href", problem.firstFull.href);
+        expect(firstFullLink).toHaveAttribute("target", "_blank");
+        expect(firstFullLink).toHaveAttribute("rel", "noreferrer");
+      }
+    }
+  });
+
+  it("colors each estimate from its own rating band", () => {
+    const problem = {
+      ...contestDashboardFixture.problems[0],
+      estimates: { score25: 1260, score50: 2330, score75: null, score100: null },
+    };
+
+    render(<ContestProblemAnalysis problems={[problem]} />);
+
+    expect(screen.getByText("1,260")).toHaveClass("text-green-700", "dark:text-green-400");
+    expect(screen.getByText("2,330")).toHaveClass("text-red-700", "dark:text-red-400");
+  });
+
+  it("explains the exact estimate algorithm by pointer and keyboard", async () => {
+    const user = userEvent.setup();
+    render(<ContestProblemAnalysis problems={[contestDashboardFixture.problems[0]]} />);
+
+    const trigger = screen.getByRole("button", { name: "예상 레이팅 산출 방식" });
+
+    await user.hover(trigger);
+    let tooltip = await screen.findByRole("tooltip");
+    expect(tooltip).toHaveTextContent("점수 이상");
+    expect(tooltip).toHaveTextContent("대회 전 레이팅");
+    expect(tooltip).toHaveTextContent("중앙값");
+    expect(tooltip).toHaveTextContent("10 단위");
+    expect(tooltip).toHaveTextContent("감소하지 않도록");
+
+    await user.unhover(trigger);
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("tooltip")).not.toBeInTheDocument());
+
+    await user.tab();
+    expect(trigger).toHaveFocus();
+    tooltip = await screen.findByRole("tooltip");
+    expect(tooltip).toHaveTextContent("점수 이상");
   });
 
   it("keeps long problem metadata available in its single responsive row", () => {
@@ -70,7 +147,11 @@ describe("ContestProblemAnalysis", () => {
     );
 
     // Catches loss of the responsive/mobile wrapping and dark-surface protections.
-    expect(header).toHaveClass("sr-only", "md:not-sr-only", "md:grid", "md:dark:text-slate-400");
+    expect(header).toHaveClass("grid", "dark:text-slate-400");
+    expect(within(header).getByRole("columnheader", { name: "문제" })).toHaveClass(
+      "sr-only",
+      "md:not-sr-only",
+    );
     expect(problemCell).toHaveClass("min-w-0");
     expect(within(problemCell).getByText("문제")).toHaveClass("md:hidden", "dark:text-slate-400");
     expect(within(problemCell).getByText("두 수열")).toHaveClass(
