@@ -1,5 +1,5 @@
 import { parseProblemTier, type ProblemTier, type ProblemTierGroup } from "@/domain/problemTier";
-import { toKstIsoDate } from "@/domain/kstDate";
+import { isValidUtcIsoTimestamp, toKstIsoDate } from "@/domain/kstDate";
 import { getRatingBand } from "@/domain/rating";
 import { calculateDailyStreak, calculateSequenceStreak } from "@/domain/streak";
 import type { ParsedUserInfo } from "@/features/user/data/parseUserInfo";
@@ -272,31 +272,11 @@ function isRawSubmission(value: unknown): value is RawSubmission {
     typeof value.submmit_lang === "string" &&
     value.submmit_lang.length > 0 &&
     typeof value.submmit_at === "string" &&
-    isValidUtcTimestamp(value.submmit_at) &&
+    isValidUtcIsoTimestamp(value.submmit_at) &&
     typeof value.submmit_score === "number" &&
     Number.isFinite(value.submmit_score) &&
     value.submmit_score >= 0 &&
     value.submmit_score <= value.p_maxscore
-  );
-}
-
-function isValidUtcTimestamp(value: string): boolean {
-  const match =
-    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,3})?Z$/.exec(value);
-
-  if (!match) {
-    return false;
-  }
-
-  const date = new Date(value);
-  return (
-    !Number.isNaN(date.getTime()) &&
-    date.getUTCFullYear() === Number(match[1]) &&
-    date.getUTCMonth() === Number(match[2]) - 1 &&
-    date.getUTCDate() === Number(match[3]) &&
-    date.getUTCHours() === Number(match[4]) &&
-    date.getUTCMinutes() === Number(match[5]) &&
-    date.getUTCSeconds() === Number(match[6])
   );
 }
 

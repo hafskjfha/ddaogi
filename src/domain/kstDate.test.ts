@@ -13,4 +13,8 @@ describe("toKstIsoDate", () => {
   it("rejects an invalid timestamp", () => {
     expect(() => toKstIsoDate("not-a-timestamp")).toThrow(TypeError);
   });
+
+  it("rejects an ISO UTC timestamp whose calendar day does not exist", () => {
+    expect(() => toKstIsoDate("2026-02-30T00:00:00.000Z")).toThrow(TypeError);
+  });
 });

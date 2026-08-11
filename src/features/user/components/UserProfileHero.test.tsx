@@ -44,6 +44,14 @@ describe("UserProfileHero", () => {
     expect(within(solvedCard).getByText("만점 랭킹: 9등")).toBeInTheDocument();
   });
 
+  it("associates the rating percentile with a description-list term", () => {
+    render(<UserProfileHero profile={specialistProfile} />);
+
+    const percentile = screen.getByText("top 31.3%");
+    expect(percentile.closest("dd")).not.toBeNull();
+    expect(screen.getByText("레이팅 백분위")).toHaveClass("sr-only");
+  });
+
   it("keeps the fallback avatar above the banner overlay", () => {
     render(<UserProfileHero profile={specialistProfile} />);
 
