@@ -16,4 +16,19 @@ describe("ContestList", () => {
     expect(screen.getByRole("button", { name: "이전 페이지" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "다음 페이지" })).toBeDisabled();
   });
+
+  it("renders decorative metadata and pagination icons outside accessible labels", () => {
+    render(<ContestList page={paginateContests(CONTEST_CATALOG, 1)} />);
+
+    for (const label of ["개최일", "참가 유형", "대회 시간"]) {
+      expect(screen.getByText(label).parentElement?.querySelector("svg[aria-hidden='true']")).not.toBeNull();
+    }
+
+    expect(
+      screen.getByRole("button", { name: "이전 페이지" }).querySelector("svg[aria-hidden='true']"),
+    ).not.toBeNull();
+    expect(
+      screen.getByRole("button", { name: "다음 페이지" }).querySelector("svg[aria-hidden='true']"),
+    ).not.toBeNull();
+  });
 });
