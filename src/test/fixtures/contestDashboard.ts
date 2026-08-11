@@ -46,7 +46,10 @@ export const contestDashboardFixture: ContestDashboardData = {
         href: "https://doj.kr/ko/user/cmorx2455005q5f7m2wqvcewh",
         time: "0m 55s",
       },
-      estimates: { score25: 1400, score50: 1400, score75: 1410, score100: 1430 },
+      estimates: [
+        { score: 34, rating: 1277 },
+        { score: 100, rating: 1310 },
+      ],
     },
     {
       index: "I",
@@ -54,7 +57,12 @@ export const contestDashboardFixture: ContestDashboardData = {
       href: "https://doj.kr/ko/problems/350",
       tier: parseProblemTier("Diamond II"),
       firstFull: null,
-      estimates: { score25: 2100, score50: 2200, score75: null, score100: null },
+      estimates: [
+        { score: 22, rating: 1903 },
+        { score: 38, rating: 1954 },
+        { score: 56, rating: 2274 },
+        { score: 100, rating: null },
+      ],
     },
   ],
   ratedParticipantCount: 39,

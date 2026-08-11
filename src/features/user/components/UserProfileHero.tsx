@@ -33,6 +33,11 @@ export function UserProfileHero({ profile }: { profile: UserProfile }) {
           >
             {profile.title}
           </p>
+          {profile.introduction ? (
+            <p className="mt-2 whitespace-pre-wrap break-words text-sm text-slate-600 dark:text-slate-300">
+              {profile.introduction}
+            </p>
+          ) : null}
           <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-xl bg-slate-100 p-3 dark:bg-slate-900">
               <dt className="text-sm text-slate-600 dark:text-slate-400">현재 레이팅</dt>
@@ -64,7 +69,7 @@ export function UserProfileHero({ profile }: { profile: UserProfile }) {
               <dt className="text-sm text-slate-600 dark:text-slate-400">만점 문제 수</dt>
               <dd className="font-bold">{profile.solvedCount}문제</dd>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                만점 랭킹: {" "}
+                문제 풀이 랭킹: {" "}
                 {profile.solvedRank === null
                   ? "집계 미제공"
                   : `${profile.solvedRank.toLocaleString("ko-KR")}등`}

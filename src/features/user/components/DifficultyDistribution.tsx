@@ -92,9 +92,6 @@ export function DifficultyDistribution({
                   </span>
                   <span className="shrink-0 text-right text-slate-600 dark:text-slate-400">
                     {item.count}개 ({formatPercentage(item.percentage)}%)
-                    <span className="ml-2 text-xs">
-                      {item.totalAvailable === null ? "집계 미제공" : `${item.totalAvailable}개 중`}
-                    </span>
                   </span>
                 </li>
               );

@@ -96,7 +96,7 @@ const ROMAN_LEVEL_BY_NUMBER = {
 const LANGUAGE_LABELS: Readonly<Record<string, string>> = {
   cpp17: "C++17",
   cpp20: "C++20",
-  "custom-json": "Custom JSON",
+  "custom-json": "기타",
   pypy3: "PyPy 3",
   python3: "Python 3",
 };

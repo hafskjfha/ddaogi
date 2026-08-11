@@ -146,7 +146,8 @@ describe("ProblemOverview", () => {
     expect(screen.getByText("34 / 100점")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "자세히 보기" }));
     expect(screen.getByText("Bronze I")).toBeInTheDocument();
-    expect(screen.getByText("집계 미제공")).toBeInTheDocument();
+    expect(screen.queryByText("집계 미제공")).not.toBeInTheDocument();
+    expect(screen.queryByText(/개 중/)).not.toBeInTheDocument();
   });
 
   it("keeps complete problem identifiers available when titles are truncated", async () => {
@@ -242,6 +243,8 @@ describe("ProblemOverview", () => {
       groupLegend.textContent?.indexOf("Ruby") ?? Number.POSITIVE_INFINITY,
     );
     expect(groupLegend).toHaveTextContent("1개 (100%)");
+    expect(groupLegend).not.toHaveTextContent(/개 중/);
+    expect(groupLegend).not.toHaveTextContent("집계 미제공");
     expect(screen.queryByLabelText("Bronze 전체 해결")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Unrated 전체 해결")).not.toBeInTheDocument();
 
@@ -253,6 +256,8 @@ describe("ProblemOverview", () => {
     expect(detailLegend.textContent?.indexOf("Bronze V")).toBeLessThan(
       detailLegend.textContent?.indexOf("Ruby I") ?? Number.POSITIVE_INFINITY,
     );
+    expect(detailLegend).not.toHaveTextContent(/개 중/);
+    expect(detailLegend).not.toHaveTextContent("집계 미제공");
     expect(screen.getByLabelText("Bronze V 전체 해결")).toBeInTheDocument();
   });
 });

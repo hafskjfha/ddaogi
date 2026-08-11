@@ -18,7 +18,7 @@ export default function Home() {
             DOJ 서드파티 분석 서비스
           </div>
           <div className="space-y-3">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">DOJ를 더 깊이 읽는 따오기</h1>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">DOJ의 기록을 한곳에 따오기</h1>
             <p className="max-w-2xl text-lg text-slate-600 dark:text-slate-400">
               유저의 성장 과정과 대회의 결과를 한눈에 살펴보세요.
             </p>

@@ -56,7 +56,12 @@ describe("buildUserDashboard", () => {
     expect(dashboard.problems.filter((problem) => !problem.solved)).toHaveLength(5);
     expect(dashboard.totalSubmissions).toBe(215);
     expect(dashboard.languages.map((item) => item.count).reduce((a, b) => a + b, 0)).toBe(215);
+    expect(dashboard.languages.find(({ key }) => key === "custom-json")).toMatchObject({
+      label: "기타",
+      shortLabel: "기타",
+    });
     expect(dashboard.ratingHistory.at(-1)?.ratingAfter).toBe(1429);
+    expect(dashboard.profile.introduction).toBe("PS/CP 초보");
     expect(dashboard.profile.firstPlaceCount).toBe(0);
     expect(dashboard.profile.solvedRank).toBe(9);
     expect(dashboard.problems.find(({ id }) => id === "65")?.tier.shortLabel).toBe("G1");

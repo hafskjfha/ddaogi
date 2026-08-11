@@ -7,7 +7,7 @@ import type {
   ScoreboardEntry,
 } from "@/features/contest/model/types";
 
-const SCORE_THRESHOLDS = [25, 50, 75, 100] as const;
+const PARTIAL_SCORE_QUANTILES = [0.25, 0.5, 0.75] as const;
 const PROBLEM_COUNT = 9;
 
 /** Validates and normalizes the raw mock scoreboard rows. */
@@ -42,39 +42,36 @@ export function calculateRatingDistribution(
   };
 }
 
-/** Estimates median pre-contest ratings at four inclusive score thresholds. */
+/** Selects representative observed partial scores and always includes full score. */
+export function selectScoreThresholds(
+  entries: readonly ScoreboardEntry[],
+  problemIndex: number,
+): readonly number[] {
+  assertProblemIndex(problemIndex);
+
+  const partialScores = entries
+    .map((entry) => entry.problemScores[problemIndex])
+    .filter((score) => score > 0 && score < 100)
+    .sort((left, right) => left - right);
+  const selected = PARTIAL_SCORE_QUANTILES.map((percentile) => {
+    const index = Math.ceil(percentile * partialScores.length) - 1;
+    return partialScores[index];
+  }).filter((score): score is number => score !== undefined);
+
+  return [...new Set([...selected, 100])].sort((left, right) => left - right);
+}
+
+/** Fits a kenkoooo-style success-probability difficulty at each selected score. */
 export function estimateProblemRatings(
   entries: readonly ScoreboardEntry[],
   problemIndex: number,
 ): ScoreEstimates {
-  if (!Number.isInteger(problemIndex) || problemIndex < 0 || problemIndex >= PROBLEM_COUNT) {
-    throw new RangeError(`Problem index must be between 0 and ${PROBLEM_COUNT - 1}.`);
-  }
+  assertProblemIndex(problemIndex);
 
-  let previousMaximum: number | null = null;
-  const estimates = SCORE_THRESHOLDS.map((threshold) => {
-    const ratings = entries
-      .filter((entry) => entry.rating !== null && entry.problemScores[problemIndex] >= threshold)
-      .map((entry) => entry.rating)
-      .filter((rating): rating is number => rating !== null);
-    const median = quantile(ratings, 0.5);
-
-    if (median === null) {
-      return null;
-    }
-
-    const roundedMedian = Math.round(median / 10) * 10;
-    const monotonicEstimate = Math.max(previousMaximum ?? roundedMedian, roundedMedian);
-    previousMaximum = monotonicEstimate;
-    return monotonicEstimate;
-  });
-
-  return {
-    score25: estimates[0],
-    score50: estimates[1],
-    score75: estimates[2],
-    score100: estimates[3],
-  };
+  return selectScoreThresholds(entries, problemIndex).map((score) => ({
+    score,
+    rating: estimateRatingAtScore(entries, problemIndex, score),
+  }));
 }
 
 /** Builds the serializable contest dashboard from parsed metadata and raw scores. */
@@ -121,6 +118,48 @@ function parseScoreboardEntry(input: unknown, index: number): ScoreboardEntry {
     performance: parsePerformance(input.performance, index),
     rating: parseRating(input.rating, index),
   };
+}
+
+function assertProblemIndex(problemIndex: number): void {
+  if (!Number.isInteger(problemIndex) || problemIndex < 0 || problemIndex >= PROBLEM_COUNT) {
+    throw new RangeError(`Problem index must be between 0 and ${PROBLEM_COUNT - 1}.`);
+  }
+}
+
+function estimateRatingAtScore(
+  entries: readonly ScoreboardEntry[],
+  problemIndex: number,
+  score: number,
+): number | null {
+  const ratedEntries = entries.filter(
+    (entry): entry is ScoreboardEntry & { readonly rating: number } => entry.rating !== null,
+  );
+  const actualSuccesses = ratedEntries.filter(
+    (entry) => entry.problemScores[problemIndex] >= score,
+  ).length;
+
+  if (actualSuccesses === 0 || actualSuccesses === ratedEntries.length) {
+    return null;
+  }
+
+  let lower = -10_000;
+  let upper = 10_000;
+
+  while (upper - lower > 1) {
+    const midpoint = Math.floor((lower + upper) / 2);
+    const expectedSuccesses = ratedEntries.reduce(
+      (sum, entry) => sum + 1 / (1 + 6 ** ((midpoint - entry.rating) / 400)),
+      0,
+    );
+
+    if (expectedSuccesses < actualSuccesses) {
+      upper = midpoint;
+    } else {
+      lower = midpoint;
+    }
+  }
+
+  return lower;
 }
 
 function isScoreboardObject(value: unknown): value is Readonly<Record<string, unknown>> {

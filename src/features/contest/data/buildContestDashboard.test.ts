@@ -7,12 +7,24 @@ import {
   calculateRatingDistribution,
   estimateProblemRatings,
   parseScoreboard,
+  selectScoreThresholds,
 } from "@/features/contest/data/buildContestDashboard";
 import { parseContestInfo } from "@/features/contest/data/parseContestInfo";
 
 const markdown = readFileSync(resolve(process.cwd(), "data/contest_info.md"), "utf8");
 
 const emptyScores = ["0", "0", "0", "0", "0", "0", "0", "0", "0"] as const;
+
+function firstProblemScoreRow(score: number, rating: number | null, index: number) {
+  return {
+    rank: String(index + 1),
+    nickname: `participant-${index + 1}`,
+    problem_scores: [String(score), ...emptyScores.slice(1)],
+    total_score: String(score),
+    performance: "-",
+    ...(rating === null ? {} : { rating }),
+  };
+}
 
 describe("contest analytics", () => {
   it("calculates rated participant quartiles from the actual scoreboard", () => {
@@ -28,61 +40,59 @@ describe("contest analytics", () => {
     });
   });
 
-  it("returns monotonic rounded estimates for each score threshold", () => {
+  it("selects observed partial-score quartiles and always includes 100", () => {
     const entries = parseScoreboard(scoreboard);
-    const estimates = estimateProblemRatings(entries, 7);
-    const numeric = [
-      estimates.score25,
-      estimates.score50,
-      estimates.score75,
-      estimates.score100,
-    ].filter((value): value is number => value !== null);
 
-    expect(numeric.every((value) => value % 10 === 0)).toBe(true);
-    expect(numeric.every((value, index) => index === 0 || value >= numeric[index - 1])).toBe(true);
+    expect(selectScoreThresholds(entries, 8)).toEqual([22, 38, 56, 100]);
+    expect(
+      selectScoreThresholds(
+        parseScoreboard(
+          [10, 20, 30, 40, 50, 0, 100].map((score, index) =>
+            firstProblemScoreRow(score, 1200 + index * 100, index),
+          ),
+        ),
+        0,
+      ),
+    ).toEqual([20, 30, 40, 100]);
+    expect(
+      selectScoreThresholds(
+        parseScoreboard(
+          [100, 100].map((score, index) => firstProblemScoreRow(score, 1200, index)),
+        ),
+        0,
+      ),
+    ).toEqual([100]);
+    expect(
+      selectScoreThresholds(
+        parseScoreboard(
+          [34, 34, 34].map((score, index) => firstProblemScoreRow(score, 1200, index)),
+        ),
+        0,
+      ),
+    ).toEqual([34, 100]);
   });
 
-  it("includes exact score boundaries and preserves null thresholds during cumulative maximum", () => {
+  it("fits the success and failure ratings instead of taking the achiever median", () => {
     const entries = parseScoreboard([
-      {
-        rank: "1",
-        nickname: "below",
-        problem_scores: ["24", ...emptyScores.slice(1)],
-        total_score: "24",
-        performance: "1000",
-        rating: 1000,
-      },
-      {
-        rank: "2",
-        nickname: "quarter",
-        problem_scores: ["25", ...emptyScores.slice(1)],
-        total_score: "25",
-        performance: "900",
-        rating: 900,
-      },
-      {
-        rank: "3",
-        nickname: "half",
-        problem_scores: ["50", ...emptyScores.slice(1)],
-        total_score: "50",
-        performance: "800",
-        rating: 800,
-      },
-      {
-        rank: "4",
-        nickname: "unrated-full",
-        problem_scores: ["100", ...emptyScores.slice(1)],
-        total_score: "100",
-        performance: "-",
-      },
+      firstProblemScoreRow(0, 1000, 0),
+      firstProblemScoreRow(100, 2000, 1),
     ]);
 
-    expect(estimateProblemRatings(entries, 0)).toEqual({
-      score25: 850,
-      score50: 850,
-      score75: null,
-      score100: null,
-    });
+    expect(estimateProblemRatings(entries, 0)).toEqual([{ score: 100, rating: 1500 }]);
+  });
+
+  it("returns an unavailable estimate when every rated participant is on one side", () => {
+    const noSuccess = parseScoreboard([
+      firstProblemScoreRow(0, 1000, 0),
+      firstProblemScoreRow(0, 2000, 1),
+    ]);
+    const allSuccess = parseScoreboard([
+      firstProblemScoreRow(100, 1000, 0),
+      firstProblemScoreRow(100, 2000, 1),
+    ]);
+
+    expect(estimateProblemRatings(noSuccess, 0)).toEqual([{ score: 100, rating: null }]);
+    expect(estimateProblemRatings(allSuccess, 0)).toEqual([{ score: 100, rating: null }]);
   });
 
   it("uses supplied pre-contest ratings even when contest performance is unavailable", () => {
@@ -184,8 +194,11 @@ describe("contest analytics", () => {
     ]);
 
     expect(() => calculateRatingDistribution(unratedEntries)).toThrow(/rating/i);
+    expect(estimateProblemRatings(unratedEntries, 0)).toEqual([{ score: 100, rating: null }]);
     expect(() => estimateProblemRatings(unratedEntries, -1)).toThrow(RangeError);
     expect(() => estimateProblemRatings(unratedEntries, 9)).toThrow(RangeError);
+    expect(() => selectScoreThresholds(unratedEntries, -1)).toThrow(RangeError);
+    expect(() => selectScoreThresholds(unratedEntries, 9)).toThrow(RangeError);
   });
 
   it("builds all contest problems with estimates from the supplied files", () => {
@@ -196,12 +209,17 @@ describe("contest analytics", () => {
     expect(dashboard.problems[0]).toMatchObject({
       index: "A",
       title: "두 수열",
-      estimates: { score25: 1450, score50: 1450, score75: 1450, score100: 1450 },
+      estimates: [{ score: 100, rating: 987 }],
     });
     expect(dashboard.problems[8]).toMatchObject({
       index: "I",
       firstFull: null,
-      estimates: { score25: 2120, score50: 2190, score75: null, score100: null },
+      estimates: [
+        { score: 22, rating: 1903 },
+        { score: 38, rating: 1954 },
+        { score: 56, rating: 2274 },
+        { score: 100, rating: null },
+      ],
     });
   });
 });

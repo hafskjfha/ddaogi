@@ -10,6 +10,7 @@ describe("parseUserInfo", () => {
     const result = parseUserInfo(markdown);
 
     expect(result.profile).toMatchObject({
+      introduction: "PS/CP 초보",
       currentRating: 1429,
       maxRating: 1429,
       ratingRank: 89,
@@ -21,6 +22,23 @@ describe("parseUserInfo", () => {
     });
     expect(result.participations).toHaveLength(8);
     expect(result.contestCalendar).toHaveLength(22);
+  });
+
+  it("enforces the DOJ introduction character and line-break limits", () => {
+    const replaceIntroduction = (value: string) => markdown.replace("PS/CP 초보", value);
+
+    expect(
+      parseUserInfo(replaceIntroduction("가".repeat(500))).profile.introduction,
+    ).toHaveLength(500);
+    expect(
+      parseUserInfo(replaceIntroduction("1\n2\n3\n4\n5\n6\n7")).profile.introduction,
+    ).toBe("1\n2\n3\n4\n5\n6\n7");
+    expect(() => parseUserInfo(replaceIntroduction("가".repeat(501)))).toThrow(
+      /user_info\.md.*500/i,
+    );
+    expect(() => parseUserInfo(replaceIntroduction("1\n2\n3\n4\n5\n6\n7\n8"))).toThrow(
+      /user_info\.md.*6/i,
+    );
   });
 
   it("normalizes dates and nullable rating values without treating the initial rating as a contest", () => {

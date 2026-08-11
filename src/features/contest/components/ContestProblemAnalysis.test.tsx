@@ -34,12 +34,11 @@ describe("ContestProblemAnalysis", () => {
       "dark:text-red-400",
     );
     expect(within(row).getByText("0m 55s")).toBeInTheDocument();
-    expect(within(row).getByText("25%")).toBeInTheDocument();
-    expect(within(row).getByText("50%")).toBeInTheDocument();
-    expect(within(row).getByText("75%")).toBeInTheDocument();
-    expect(within(row).getByText("100%")).toBeInTheDocument();
-    expect(within(row).getAllByText("1,400")).toHaveLength(2);
-    expect(within(row).getByText("1,430")).toBeInTheDocument();
+    expect(within(row).getByText("34점")).toBeInTheDocument();
+    expect(within(row).getByText("100점")).toBeInTheDocument();
+    expect(within(row).queryByText("25%")).not.toBeInTheDocument();
+    expect(within(row).getByText("1,277")).toBeInTheDocument();
+    expect(within(row).getByText("1,310")).toBeInTheDocument();
 
     const unansweredRow = screen.getByRole("row", { name: "I 직사각형 2" });
     expect(within(unansweredRow).getByText("D2")).toBeInTheDocument();
@@ -49,7 +48,7 @@ describe("ContestProblemAnalysis", () => {
     );
     expect(within(unansweredRow).getByText("없음")).toBeInTheDocument();
     expect(within(unansweredRow).queryByText("아직 없음")).not.toBeInTheDocument();
-    expect(within(unansweredRow).getAllByText("-")).toHaveLength(2);
+    expect(within(unansweredRow).getAllByText("-")).toHaveLength(1);
   });
 
   it("links every supplied problem and present first-full profile safely", () => {
@@ -73,7 +72,10 @@ describe("ContestProblemAnalysis", () => {
   it("colors each estimate from its own rating band", () => {
     const problem = {
       ...contestDashboardFixture.problems[0],
-      estimates: { score25: 1260, score50: 2330, score75: null, score100: null },
+      estimates: [
+        { score: 34, rating: 1260 },
+        { score: 100, rating: 2330 },
+      ],
     };
 
     render(<ContestProblemAnalysis problems={[problem]} />);
@@ -90,11 +92,14 @@ describe("ContestProblemAnalysis", () => {
 
     await user.hover(trigger);
     let tooltip = await screen.findByRole("tooltip");
-    expect(tooltip).toHaveTextContent("점수 이상");
+    expect(tooltip).toHaveTextContent("부분점수");
+    expect(tooltip).toHaveTextContent("사분위");
+    expect(tooltip).toHaveTextContent("100점");
     expect(tooltip).toHaveTextContent("대회 전 레이팅");
-    expect(tooltip).toHaveTextContent("중앙값");
-    expect(tooltip).toHaveTextContent("10 단위");
-    expect(tooltip).toHaveTextContent("감소하지 않도록");
+    expect(tooltip).toHaveTextContent("성공 확률");
+    expect(tooltip).toHaveTextContent("달성");
+    expect(tooltip).toHaveTextContent("미달");
+    expect(tooltip).toHaveTextContent("-");
 
     await user.unhover(trigger);
     await user.keyboard("{Escape}");
@@ -103,7 +108,7 @@ describe("ContestProblemAnalysis", () => {
     await user.tab();
     expect(trigger).toHaveFocus();
     tooltip = await screen.findByRole("tooltip");
-    expect(tooltip).toHaveTextContent("점수 이상");
+    expect(tooltip).toHaveTextContent("성공 확률");
   });
 
   it("keeps long problem metadata available in its single responsive row", () => {
@@ -161,8 +166,11 @@ describe("ContestProblemAnalysis", () => {
     );
     expect(firstFullCell).toHaveClass("min-w-0");
     expect(within(firstFullCell).getByText("jkrt").parentElement).toHaveClass("break-words");
-    expect(estimates).toHaveClass("grid", "grid-cols-4");
-    expect(Array.from(estimates.children)).toHaveLength(4);
+    expect(estimates).toHaveClass(
+      "grid",
+      "grid-cols-[repeat(auto-fit,minmax(3.25rem,1fr))]",
+    );
+    expect(Array.from(estimates.children)).toHaveLength(2);
     expect(Array.from(estimates.children)[0]).toHaveClass("min-w-0", "dark:bg-slate-900");
   });
 

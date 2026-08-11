@@ -10,6 +10,7 @@ describe("UserProfileHero", () => {
       <UserProfileHero
         profile={{
           handle: "jtw7913",
+          introduction: "PS/CP 초보",
           currentRating: 1429,
           maxRating: 1429,
           ratingRank: 89,
@@ -27,6 +28,7 @@ describe("UserProfileHero", () => {
 
     expect(screen.getByRole("heading", { name: "jtw7913" })).toBeInTheDocument();
     expect(screen.getByText("SPECIALIST")).not.toHaveStyle({ color: SPECIALIST_COLOR });
+    expect(screen.getByText("SPECIALIST").nextElementSibling).toHaveTextContent("PS/CP 초보");
     expect(
       screen.getByRole("img", { name: "jtw7913 프로필 이미지 대체 표시" }),
     ).toHaveClass("rounded-full");
@@ -41,7 +43,7 @@ describe("UserProfileHero", () => {
     expect(screen.getByText("90문제")).toBeInTheDocument();
     const solvedCard = screen.getByText("만점 문제 수").closest("div");
     if (!solvedCard) throw new Error("Full-score card is missing");
-    expect(within(solvedCard).getByText("만점 랭킹: 9등")).toBeInTheDocument();
+    expect(within(solvedCard).getByText("문제 풀이 랭킹: 9등")).toBeInTheDocument();
   });
 
   it("associates the rating percentile with a description-list term", () => {
@@ -58,6 +60,23 @@ describe("UserProfileHero", () => {
     expect(
       screen.getByRole("img", { name: "jtw7913 프로필 이미지 대체 표시" }),
     ).toHaveClass("relative", "z-10");
+  });
+
+  it("preserves multiline introductions without allowing long tokens to overflow", () => {
+    render(
+      <UserProfileHero
+        profile={{ ...specialistProfile, introduction: "PS/CP 초보\n긴소개문장" }}
+      />,
+    );
+
+    expect(screen.getByText(/PS\/CP 초보/)).toHaveTextContent("PS/CP 초보 긴소개문장");
+    expect(screen.getByText(/PS\/CP 초보/)).toHaveClass("whitespace-pre-wrap", "break-words");
+  });
+
+  it("omits the introduction element when the profile introduction is empty", () => {
+    render(<UserProfileHero profile={{ ...specialistProfile, introduction: "" }} />);
+
+    expect(screen.getByText("SPECIALIST").nextElementSibling).toHaveProperty("tagName", "DL");
   });
 
   it("uses the canonical rating color as a high-contrast visual cue", () => {
@@ -84,6 +103,7 @@ describe("UserProfileHero", () => {
 
 const specialistProfile = {
   handle: "jtw7913",
+  introduction: "PS/CP 초보",
   currentRating: 1429,
   maxRating: 1429,
   ratingRank: 89,

@@ -4,6 +4,7 @@ import type { UserDashboardData } from "@/features/user/model/types";
 export const userDashboardFixture: UserDashboardData = {
   profile: {
     handle: "jtw7913",
+    introduction: "PS/CP 초보",
     currentRating: 1429,
     maxRating: 1429,
     ratingRank: 89,

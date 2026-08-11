@@ -11,13 +11,13 @@ export interface ContestDashboardData {
   readonly ratedParticipantCount: number;
 }
 
-/** Estimated pre-contest ratings for fixed score thresholds. */
-export interface ScoreEstimates {
-  readonly score25: number | null;
-  readonly score50: number | null;
-  readonly score75: number | null;
-  readonly score100: number | null;
+/** Estimated pre-contest rating for an observed score threshold. */
+export interface ScoreEstimate {
+  readonly score: number;
+  readonly rating: number | null;
 }
+
+export type ScoreEstimates = readonly ScoreEstimate[];
 
 /** A DOJ profile reference with the rating supplied by the source. */
 export interface LinkedRatedUser {

@@ -36,6 +36,7 @@ describe("contest dashboard composition", () => {
     expect(screen.getByRole("link", { name: "jkrt" })).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "RreShi" })).toHaveLength(4);
     expect(screen.getByRole("button", { name: "예상 레이팅 산출 방식" })).toBeInTheDocument();
+    expect(screen.getByText("22점")).toBeInTheDocument();
     expect(screen.getByText("없음")).toBeInTheDocument();
     expect(screen.queryByText("아직 없음")).not.toBeInTheDocument();
   });

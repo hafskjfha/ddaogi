@@ -9,7 +9,7 @@ const LANGUAGE_LABELS: Readonly<Record<string, string>> = {
   python3: "Python 3",
   cpp17: "C++17",
   cpp20: "C++20",
-  "custom-json": "Custom JSON",
+  "custom-json": "기타",
 };
 
 function formatPercentage(value: number): string {

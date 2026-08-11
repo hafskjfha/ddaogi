@@ -6,7 +6,7 @@ describe("Home", () => {
   it("introduces the service and discloses its unofficial snapshot data", () => {
     render(<Home />);
 
-    expect(screen.getByRole("heading", { name: "DOJ를 더 깊이 읽는 따오기" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "DOJ의 기록을 한곳에 따오기" })).toBeInTheDocument();
     expect(screen.getByText(/DOJ에서 운영하는 공식 사이트가 아닌/)).toBeInTheDocument();
     expect(screen.getByText(/2026\.08\.11 오전 2시/)).toBeInTheDocument();
     expect(screen.getByText(/실시간 데이터가 아닙니다/)).toBeInTheDocument();

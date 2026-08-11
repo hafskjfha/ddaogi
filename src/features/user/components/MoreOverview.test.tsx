@@ -120,8 +120,9 @@ describe("MoreOverview", () => {
       "C++204회 (26.7%)",
       "Python 33회 (20%)",
       "C++172회 (13.3%)",
-      "Custom JSON1회 (6.7%)",
+      "기타1회 (6.7%)",
     ]);
+    expect(screen.queryByText("Custom JSON")).not.toBeInTheDocument();
     expect(container.querySelectorAll(".recharts-pie-sector")).toHaveLength(5);
   });
 

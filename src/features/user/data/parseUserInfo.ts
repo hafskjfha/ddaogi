@@ -24,6 +24,7 @@ export interface ParsedUserInfo {
 
 const PARTICIPATION_HEADING = "## 참여 대회 정보";
 const CALENDAR_HEADING = "# 전체 대회 정보";
+const INTRODUCTION_HEADING = "## 소개";
 const PARTICIPATION_HEADER = ["날짜", "대회명", "랭킹", "퍼포먼스레이팅", "diff", "기타"];
 const CALENDAR_HEADER = ["시작 시간", "대회 이름"];
 
@@ -31,10 +32,11 @@ const CALENDAR_HEADER = ["시작 시간", "대회 이름"];
 export function parseUserInfo(markdown: string): ParsedUserInfo {
   const lines = markdown.split(/\r?\n/);
   const ratingLines = getSection(lines, "## 레이팅 정보");
+  const introductionLines = getSection(lines, INTRODUCTION_HEADING);
   const participationLines = getSection(lines, PARTICIPATION_HEADING);
   const otherInfoLines = getSection(lines, "## 대회 기타 정보");
   const calendarLines = getSection(lines, CALENDAR_HEADING);
-  const profile = parseProfile(ratingLines, otherInfoLines);
+  const profile = parseProfile(ratingLines, introductionLines, otherInfoLines);
   const participationRows = getTableRows(participationLines, PARTICIPATION_HEADER, PARTICIPATION_HEADING);
   const initialRow = participationRows.find((row) => row[5] === "초기 레이팅");
 
@@ -67,6 +69,7 @@ export function parseUserInfo(markdown: string): ParsedUserInfo {
 
 function parseProfile(
   ratingLines: readonly string[],
+  introductionLines: readonly string[],
   otherInfoLines: readonly string[],
 ): ParsedUserInfo["profile"] {
   const ratingText = ratingLines.join("\n");
@@ -90,6 +93,7 @@ function parseProfile(
   }
 
   return {
+    introduction: parseIntroduction(introductionLines),
     currentRating: Number(ratingMatch[1]),
     maxRating: Number(ratingMatch[4]),
     ratingRank: Number(ratingMatch[2]),
@@ -99,6 +103,22 @@ function parseProfile(
     firstPlaceCount: Number(firstPlaceMatch[1]),
     firstFullCount: Number(firstFullMatch[1]),
   };
+}
+
+function parseIntroduction(lines: readonly string[]): string {
+  const introduction = lines.join("\n").trim();
+  const characterCount = [...introduction].length;
+  const lineBreakCount = introduction.length === 0 ? 0 : introduction.split("\n").length - 1;
+
+  if (characterCount > 500) {
+    throw invalidUserInfo("introduction must contain at most 500 characters");
+  }
+
+  if (lineBreakCount > 6) {
+    throw invalidUserInfo("introduction must contain at most 6 line breaks");
+  }
+
+  return introduction;
 }
 
 function parseParticipation(row: readonly string[]): ParsedParticipation {

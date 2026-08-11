@@ -17,6 +17,7 @@ export interface UserDashboardData {
 
 export interface UserProfile {
   readonly handle: string;
+  readonly introduction: string;
   readonly currentRating: number;
   readonly maxRating: number;
   readonly ratingRank: number;
