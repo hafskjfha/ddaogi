@@ -32,7 +32,7 @@ export function ProblemList({
   showScore: boolean;
 }) {
   return (
-    <Card>
+    <Card className="min-w-0">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>

@@ -73,6 +73,16 @@ const analyticsFixture: UserDashboardData = {
 };
 
 describe("ProblemOverview", () => {
+  it("lets both problem-list cards shrink below their intrinsic content width on mobile", () => {
+    render(<ProblemOverview dashboard={userDashboardFixture} />);
+
+    for (const label of ["만점 문제 목록", "만점 미달 목록"]) {
+      const card = screen.getByRole("region", { name: label }).closest("section");
+      expect(card).not.toBeNull();
+      expect(card).toHaveClass("min-w-0");
+    }
+  });
+
   it("gives each non-empty problem list its own bounded keyboard-scrollable region", () => {
     render(<ProblemOverview dashboard={userDashboardFixture} />);
 
