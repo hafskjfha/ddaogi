@@ -29,6 +29,19 @@ describe("Home", () => {
     );
   });
 
+  it("links the feature cards to their analysis index pages", () => {
+    render(<Home />);
+
+    expect(screen.getByRole("link", { name: "유저 분석 페이지로 이동" })).toHaveAttribute(
+      "href",
+      "/users",
+    );
+    expect(screen.getByRole("link", { name: "대회 분석 페이지로 이동" })).toHaveAttribute(
+      "href",
+      "/contests",
+    );
+  });
+
   it("keeps demo links visibly focused in dark mode", () => {
     render(<Home />);
 

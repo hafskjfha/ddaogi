@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/
 
 const USER_DEMO_HREF = "/users/jtw7913";
 const CONTEST_DEMO_HREF = "/contests/doj-beginner-contest-4";
+const USER_INDEX_HREF = "/users";
+const CONTEST_INDEX_HREF = "/contests";
 
 /** Introduces Ddaogi and routes visitors to the available analytics demos. */
 export default function Home() {
@@ -52,20 +54,32 @@ export default function Home() {
         </Card>
       </section>
       <section className="grid gap-4 md:grid-cols-2" aria-label="분석 기능">
-        <Card>
-          <CardHeader>
-            <UserRoundSearch aria-hidden="true" className="size-5 text-blue-600" />
-            <h2 className="text-lg font-semibold leading-none tracking-tight">유저 분석</h2>
-            <CardDescription>레이팅, 문제 풀이, 대회 기록을 입체적으로 확인합니다.</CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <Trophy aria-hidden="true" className="size-5 text-blue-600" />
-            <h2 className="text-lg font-semibold leading-none tracking-tight">대회 분석</h2>
-            <CardDescription>참가자 레이팅 분포와 문제별 결과를 비교합니다.</CardDescription>
-          </CardHeader>
-        </Card>
+        <Link
+          href={USER_INDEX_HREF}
+          aria-label="유저 분석 페이지로 이동"
+          className="group rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 dark:focus-visible:ring-slate-300 dark:focus-visible:ring-offset-slate-950"
+        >
+          <Card className="h-full transition-all group-hover:-translate-y-0.5 group-hover:border-blue-300 group-hover:shadow-md dark:group-hover:border-blue-800">
+            <CardHeader>
+              <UserRoundSearch aria-hidden="true" className="size-5 text-blue-600 dark:text-blue-400" />
+              <h2 className="text-lg font-semibold leading-none tracking-tight">유저 분석</h2>
+              <CardDescription>레이팅, 문제 풀이, 대회 기록을 입체적으로 확인합니다.</CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+        <Link
+          href={CONTEST_INDEX_HREF}
+          aria-label="대회 분석 페이지로 이동"
+          className="group rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 dark:focus-visible:ring-slate-300 dark:focus-visible:ring-offset-slate-950"
+        >
+          <Card className="h-full transition-all group-hover:-translate-y-0.5 group-hover:border-blue-300 group-hover:shadow-md dark:group-hover:border-blue-800">
+            <CardHeader>
+              <Trophy aria-hidden="true" className="size-5 text-blue-600 dark:text-blue-400" />
+              <h2 className="text-lg font-semibold leading-none tracking-tight">대회 분석</h2>
+              <CardDescription>참가자 레이팅 분포와 문제별 결과를 비교합니다.</CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
       </section>
     </div>
   );
