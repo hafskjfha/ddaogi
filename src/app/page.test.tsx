@@ -32,14 +32,34 @@ describe("Home", () => {
   it("links the feature cards to their analysis index pages", () => {
     render(<Home />);
 
-    expect(screen.getByRole("link", { name: "유저 분석 페이지로 이동" })).toHaveAttribute(
-      "href",
-      "/users",
-    );
-    expect(screen.getByRole("link", { name: "대회 분석 페이지로 이동" })).toHaveAttribute(
-      "href",
-      "/contests",
-    );
+    for (const [name, href] of [
+      ["유저 분석 페이지로 이동", "/users"],
+      ["대회 분석 페이지로 이동", "/contests"],
+    ]) {
+      const link = screen.getByRole("link", { name });
+
+      expect(link).toHaveAttribute("href", href);
+      expect(link).toHaveClass(
+        "focus-visible:outline-none",
+        "focus-visible:ring-2",
+        "focus-visible:ring-slate-950",
+        "focus-visible:ring-offset-2",
+        "dark:focus-visible:ring-slate-300",
+        "dark:focus-visible:ring-offset-slate-950",
+      );
+
+      const card = link.querySelector("section");
+      if (!(card instanceof HTMLElement)) throw new Error(`${name} card is missing`);
+
+      expect(card).toHaveClass(
+        "h-full",
+        "transition-all",
+        "group-hover:-translate-y-0.5",
+        "group-hover:border-blue-300",
+        "group-hover:shadow-md",
+        "dark:group-hover:border-blue-800",
+      );
+    }
   });
 
   it("keeps demo links visibly focused in dark mode", () => {
