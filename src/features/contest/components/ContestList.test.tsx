@@ -1,0 +1,19 @@
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+import { ContestList } from "./ContestList";
+import { CONTEST_CATALOG, paginateContests } from "../data/contestCatalog";
+
+describe("ContestList", () => {
+  it("shows the supported contest and disabled pagination controls on its only page", () => {
+    render(<ContestList page={paginateContests(CONTEST_CATALOG, 1)} />);
+
+    expect(screen.getByRole("heading", { name: "DOJ Beginner Contest 4" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "상세 분석 보기" })).toHaveAttribute(
+      "href",
+      "/contests/doj-beginner-contest-4",
+    );
+    expect(screen.getByText("1 / 1 페이지")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "이전 페이지" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "다음 페이지" })).toBeDisabled();
+  });
+});
