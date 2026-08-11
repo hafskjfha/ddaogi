@@ -351,7 +351,7 @@ Create `src/features/contest/data/contestCatalog.test.ts`:
 
 ```ts
 import { describe, expect, it } from "vitest";
-import { CONTESTS_PER_PAGE, paginateContests, type ContestCatalogItem } from "./contestCatalog";
+import { paginateContests, type ContestCatalogItem } from "./contestCatalog";
 
 const contests: ContestCatalogItem[] = Array.from({ length: 21 }, (_, index) => ({
   slug: `contest-${index + 1}`,
@@ -365,7 +365,6 @@ const contests: ContestCatalogItem[] = Array.from({ length: 21 }, (_, index) => 
 describe("paginateContests", () => {
   it("returns at most 20 contests and exposes the next page", () => {
     const page = paginateContests(contests, 1);
-    expect(CONTESTS_PER_PAGE).toBe(20);
     expect(page.items).toHaveLength(20);
     expect(page).toMatchObject({ currentPage: 1, totalPages: 2, hasPrevious: false, hasNext: true });
   });
