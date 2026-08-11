@@ -27,7 +27,7 @@ export interface UserProfile {
   readonly solvedRank: number | null;
   /** Count of top-three finishes reported by the source. */
   readonly podiumCount: number;
-  /** Exact first-place count, or null when the source only reports combined podiums. */
+  /** Exact first-place count, or null when unavailable in another data source. */
   readonly firstPlaceCount: number | null;
   readonly firstFullCount: number;
 }

@@ -26,7 +26,7 @@ const TIER_COLORS: Record<ProblemTierGroup, string> = {
 };
 
 const TIER_SHORT_LABELS: Record<ProblemTierGroup, string> = {
-  Unrated: "U",
+  Unrated: "UR",
   Bronze: "B",
   Silver: "S",
   Gold: "G",
@@ -47,7 +47,7 @@ const UNRATED_TIER: ProblemTier = {
   group: "Unrated",
   level: null,
   label: "Unrated",
-  shortLabel: "U",
+  shortLabel: "UR",
   color: TIER_COLORS.Unrated,
 };
 

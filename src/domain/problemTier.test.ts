@@ -7,7 +7,7 @@ describe("problem tiers", () => {
   });
 
   it("falls back to Unrated for a missing value", () => {
-    expect(formatProblemTier(parseProblemTier())).toBe("U");
+    expect(formatProblemTier(parseProblemTier())).toBe("UR");
   });
 
   it.each([
@@ -25,7 +25,7 @@ describe("problem tiers", () => {
         group: "Unrated",
         level: null,
         label: "Unrated",
-        shortLabel: "U",
+        shortLabel: "UR",
       });
     },
   );

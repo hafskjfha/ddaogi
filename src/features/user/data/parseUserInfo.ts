@@ -13,7 +13,10 @@ export interface ParsedUserInfo {
   readonly profile: Omit<
     UserProfile,
     "handle" | "title" | "titleColor" | "solvedCount" | "solvedRank" | "firstPlaceCount"
-  >;
+  > & {
+    readonly solvedRank: number;
+    readonly firstPlaceCount: number;
+  };
   readonly initialRating: number;
   readonly participations: readonly ParsedParticipation[];
   readonly contestCalendar: readonly ContestCalendarEntry[];
@@ -70,10 +73,20 @@ function parseProfile(
   const ratingMatch = /현재:\s*(\d+)\((\d+)등,\s*top([\d.]+)%\),\s*max:\s*(\d+)/.exec(ratingText);
   const otherInfoText = otherInfoLines.join("\n");
   const podiumMatch = /1,2,3등:\s*(\d+)번/.exec(otherInfoText);
+  const firstPlaceMatch = /대회 1등:\s*(\d+)번/.exec(otherInfoText);
   const firstFullMatch = /최초 만점:\s*(\d+)번/.exec(otherInfoText);
+  const solvedRankMatch = /만점 문제 랭킹:\s*(\d+)등/.exec(otherInfoText);
 
   if (!ratingMatch || !podiumMatch || !firstFullMatch) {
     throw invalidUserInfo("profile fields do not match the expected schema");
+  }
+
+  if (!firstPlaceMatch) {
+    throw invalidUserInfo("explicit first-place count is missing or invalid");
+  }
+
+  if (!solvedRankMatch) {
+    throw invalidUserInfo("explicit solved rank is missing or invalid");
   }
 
   return {
@@ -81,7 +94,9 @@ function parseProfile(
     maxRating: Number(ratingMatch[4]),
     ratingRank: Number(ratingMatch[2]),
     ratingPercentile: Number(ratingMatch[3]),
+    solvedRank: Number(solvedRankMatch[1]),
     podiumCount: Number(podiumMatch[1]),
+    firstPlaceCount: Number(firstPlaceMatch[1]),
     firstFullCount: Number(firstFullMatch[1]),
   };
 }

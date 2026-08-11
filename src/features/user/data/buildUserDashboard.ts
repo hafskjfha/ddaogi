@@ -1,4 +1,5 @@
 import { parseProblemTier, type ProblemTier, type ProblemTierGroup } from "@/domain/problemTier";
+import { toKstIsoDate } from "@/domain/kstDate";
 import { getRatingBand } from "@/domain/rating";
 import { calculateDailyStreak, calculateSequenceStreak } from "@/domain/streak";
 import type { ParsedUserInfo } from "@/features/user/data/parseUserInfo";
@@ -30,7 +31,7 @@ const TIER_GROUP_ORDER: readonly ProblemTierGroup[] = [
 ];
 
 const GROUP_SHORT_LABELS: Record<ProblemTierGroup, string> = {
-  Unrated: "U",
+  Unrated: "UR",
   Bronze: "B",
   Silver: "S",
   Gold: "G",
@@ -38,6 +39,59 @@ const GROUP_SHORT_LABELS: Record<ProblemTierGroup, string> = {
   Diamond: "D",
   Ruby: "R",
 };
+
+const PROBLEM_TOTAL_KEYS = [
+  "UR",
+  "B5",
+  "B4",
+  "B3",
+  "B2",
+  "B1",
+  "S5",
+  "S4",
+  "S3",
+  "S2",
+  "S1",
+  "G5",
+  "G4",
+  "G3",
+  "G2",
+  "G1",
+  "P5",
+  "P4",
+  "P3",
+  "P2",
+  "P1",
+  "D5",
+  "D4",
+  "D3",
+  "D2",
+  "D1",
+  "R5",
+  "R4",
+  "R3",
+  "R2",
+  "R1",
+] as const;
+
+const PROBLEM_TOTAL_KEY_SET = new Set<string>(PROBLEM_TOTAL_KEYS);
+
+const TIER_GROUP_BY_PREFIX = {
+  B: "Bronze",
+  S: "Silver",
+  G: "Gold",
+  P: "Platinum",
+  D: "Diamond",
+  R: "Ruby",
+} as const;
+
+const ROMAN_LEVEL_BY_NUMBER = {
+  "1": "I",
+  "2": "II",
+  "3": "III",
+  "4": "IV",
+  "5": "V",
+} as const;
 
 const LANGUAGE_LABELS: Readonly<Record<string, string>> = {
   cpp17: "C++17",
@@ -63,9 +117,11 @@ export function buildUserDashboard(
   user: ParsedUserInfo,
   resultsInput: unknown,
   difficultiesInput: unknown,
+  problemTotalsInput: unknown,
 ): UserDashboardData {
   const rawResults = parseResultsInput(resultsInput);
   const difficulties = parseDifficultiesInput(difficultiesInput);
+  const problemTotals = parseProblemTotalsInput(problemTotalsInput);
   const problems = buildProblems(rawResults, difficulties);
   const ratingHistory = buildRatingHistory(user);
   const titleBand = getRatingBand(user.profile.currentRating);
@@ -78,8 +134,6 @@ export function buildUserDashboard(
       title: titleBand.title,
       titleColor: titleBand.color,
       solvedCount: solvedProblems.length,
-      solvedRank: null,
-      firstPlaceCount: null,
     },
     initialRating: user.initialRating,
     ratingHistory,
@@ -89,8 +143,8 @@ export function buildUserDashboard(
     },
     problems,
     problemSolveStreak: buildProblemSolveStreak(problems, user),
-    difficultyGroups: buildDifficultyGroupDistribution(solvedProblems),
-    difficultyDetails: buildDifficultyDetailDistribution(solvedProblems),
+    difficultyGroups: buildDifficultyGroupDistribution(solvedProblems, problemTotals),
+    difficultyDetails: buildDifficultyDetailDistribution(solvedProblems, problemTotals),
     languages: buildLanguageDistribution(problems),
     totalSubmissions: problems.reduce((total, problem) => total + problem.submissions.length, 0),
   };
@@ -146,12 +200,58 @@ function parseDifficultiesInput(input: unknown): ReadonlyMap<string, string> {
   return parsed;
 }
 
+function parseProblemTotalsInput(input: unknown): ReadonlyMap<string, number> {
+  if (!isRecord(input)) {
+    throw invalidProblemTotals("expected a tier-total record");
+  }
+
+  for (const key of Object.keys(input)) {
+    if (!PROBLEM_TOTAL_KEY_SET.has(key)) {
+      throw invalidProblemTotals(`tier "${key}" is unexpected`);
+    }
+  }
+
+  const totals = new Map<string, number>();
+
+  for (const key of PROBLEM_TOTAL_KEYS) {
+    if (!Object.hasOwn(input, key)) {
+      throw invalidProblemTotals(`tier "${key}" is missing`);
+    }
+
+    const total = input[key];
+
+    if (typeof total !== "number" || !Number.isInteger(total)) {
+      throw invalidProblemTotals(`tier "${key}" must be an integer`);
+    }
+
+    if (total < 0) {
+      throw invalidProblemTotals(`tier "${key}" must be non-negative`);
+    }
+
+    totals.set(normalizeProblemTotalKey(key), total);
+  }
+
+  return totals;
+}
+
+function normalizeProblemTotalKey(key: (typeof PROBLEM_TOTAL_KEYS)[number]): string {
+  if (key === "UR") return "Unrated";
+
+  const prefix = key[0] as keyof typeof TIER_GROUP_BY_PREFIX;
+  const level = key[1] as keyof typeof ROMAN_LEVEL_BY_NUMBER;
+  return `${TIER_GROUP_BY_PREFIX[prefix]} ${ROMAN_LEVEL_BY_NUMBER[level]}`;
+}
+
 function invalidResults(message: string): TypeError {
   return new TypeError(`Invalid result.json: ${message}`);
 }
 
 function invalidDifficulties(message: string): TypeError {
   return new TypeError(`Invalid difficulty.json: ${message}`);
+}
+
+function invalidProblemTotals(message: string): TypeError {
+  return new TypeError(`Invalid problems.json: ${message}`);
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -223,7 +323,9 @@ function buildProblems(
         bestScore,
         maxScore,
         solved: firstFullSubmission !== undefined,
-        firstFullDate: firstFullSubmission?.submittedAt.slice(0, 10) ?? null,
+        firstFullDate: firstFullSubmission
+          ? toKstIsoDate(firstFullSubmission.submittedAt)
+          : null,
         submissions,
       };
     });
@@ -262,7 +364,7 @@ function buildProblemSolveStreak(
   user: ParsedUserInfo,
 ): DailyActivityData {
   const submissionDates = problems.flatMap((problem) =>
-    problem.submissions.map((submission) => submission.submittedAt.slice(0, 10)),
+    problem.submissions.map((submission) => toKstIsoDate(submission.submittedAt)),
   );
   const firstFullDates = problems
     .map((problem) => problem.firstFullDate)
@@ -284,8 +386,15 @@ function buildProblemSolveStreak(
 
 function buildDifficultyGroupDistribution(
   solvedProblems: readonly ProblemSummary[],
+  problemTotals: ReadonlyMap<string, number>,
 ): readonly DistributionItem[] {
   const solvedCounts = countBy(solvedProblems.map((problem) => problem.tier.group));
+  const availableCounts = new Map<ProblemTierGroup, number>();
+
+  for (const [tierLabel, total] of problemTotals) {
+    const group = parseProblemTier(tierLabel).group;
+    availableCounts.set(group, (availableCounts.get(group) ?? 0) + total);
+  }
 
   return TIER_GROUP_ORDER.map((group) => {
     const tier = parseProblemTier(group === "Unrated" ? undefined : `${group} V`);
@@ -298,13 +407,14 @@ function buildDifficultyGroupDistribution(
       count,
       percentage: percentage(count, solvedProblems.length),
       color: tier.color,
-      totalAvailable: null,
+      totalAvailable: availableCounts.get(group) ?? 0,
     };
   });
 }
 
 function buildDifficultyDetailDistribution(
   solvedProblems: readonly ProblemSummary[],
+  problemTotals: ReadonlyMap<string, number>,
 ): readonly DistributionItem[] {
   const tierOrder = buildTierOrder();
   const solvedCounts = countBy(solvedProblems.map((problem) => problem.tier.label));
@@ -319,7 +429,7 @@ function buildDifficultyDetailDistribution(
       count,
       percentage: percentage(count, solvedProblems.length),
       color: tier.color,
-      totalAvailable: null,
+      totalAvailable: problemTotals.get(tier.label) ?? 0,
     };
   });
 }

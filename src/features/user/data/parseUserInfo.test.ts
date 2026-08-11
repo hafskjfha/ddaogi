@@ -14,7 +14,9 @@ describe("parseUserInfo", () => {
       maxRating: 1429,
       ratingRank: 89,
       ratingPercentile: 31.3,
+      solvedRank: 9,
       podiumCount: 0,
+      firstPlaceCount: 0,
       firstFullCount: 0,
     });
     expect(result.participations).toHaveLength(8);
@@ -77,5 +79,12 @@ describe("parseUserInfo", () => {
     expect(
       result.contestCalendar.find((entry) => entry.date === "2026-06-07")?.participated,
     ).toBe(true);
+  });
+
+  it.each([
+    ["대회 1등: 0번", /user_info\.md.*first-place count/i],
+    ["만점 문제 랭킹: 9등", /user_info\.md.*solved rank/i],
+  ] as const)("requires the explicit source fact %s", (sourceLine, expectedError) => {
+    expect(() => parseUserInfo(markdown.replace(sourceLine, ""))).toThrow(expectedError);
   });
 });
