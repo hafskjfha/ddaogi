@@ -10,6 +10,11 @@ function mine(id: string, name: string, capacity: number, perProblem: string, co
 }
 export const workshop: Workshop = {
   refs: [...m, ...p, ...r, ...refs("clarifications", "광산 경험치")],
+  itemUses: sourced([
+    { itemId: "repair-pack", section: "machines", description: "머신 내구도 회복에 사용" },
+    { itemId: "solar-panel", section: "power", description: "추가 발전에 사용" },
+    { itemId: "iron-ingot", section: "mines", description: "광산 레벨업 소비 재료" },
+  ], [...m, ...p, ...r]),
   machineLevels: [
     { level: 1, timeReduction: sourced(0, m), tokens: { status: "not-applicable", reason: "기본 레벨, 원문 비용 -", refs: m } },
     { level: 2, timeReduction: sourced(2, m), tokens: sourced(50, m) },

@@ -1,4 +1,4 @@
-import type { WikiItem, EquipmentSlot } from "../../src/features/dojstory/model/types";
+import type { WikiItem, EquipmentSlot, SourceRef } from "../../src/features/dojstory/model/types";
 import { refs, sourced, unknown, sourceDate } from "./sources";
 
 /** Equipment values are a transcription of the preserved equipment source. */
@@ -7,8 +7,8 @@ function equipment(id: string, name: string, slot: EquipmentSlot, options: strin
   return { id, slug: id, name, aliases: [], kind: "equipment", refs: r, checkedAt: sourceDate("equipment"), slot: sourced(slot, r), options: sourced(options, r), auctionable: sourced(auctionable, r), aiGenerated: ai === null ? { status: "not-applicable", reason: "비배경 장비에는 AI 여부를 표시하지 않음", refs: refs("clarifications", "장비 AI 여부와 이미지") } : sourced(ai, r), requiredDojpower: sourced(power, r), starforce: sourced(starforce, r, "원문 +n%: 단계별 수치 미확인"), image: image ? sourced(image, r) : unknown("이미지 자료 미확보", r), acquisition: unknown("획득 방법 미기재", r) };
 }
 /** Named entries retain their source without inventing classification or stats. */
-function minimal(id: string, name: string, source: string, section: string): WikiItem {
-  const r = refs(source, section);
+function minimal(id: string, name: string, source: string, section: string, additionalRefs: SourceRef[] = []): WikiItem {
+  const r = [...refs(source, section), ...additionalRefs];
   const missing = unknown("이름만 확보, 상세 정보 수집 중", r);
   return { id, slug: id, name, aliases: [], kind: "minimal", refs: r, checkedAt: sourceDate(source), slot: missing, options: missing, auctionable: missing, aiGenerated: missing, requiredDojpower: missing, starforce: missing, image: missing, acquisition: missing };
 }
@@ -33,11 +33,11 @@ export const items: WikiItem[] = [
   minimal("proof-of-worth", "가치의 증표", "research", "요구 DOJpower"),
   minimal("basic-prism", "베이직 프리즘", "research", "결정 압축"),
   minimal("aurora-prism", "오로라 프리즘", "clarifications", "연구 효과와 소비 재료"),
-  minimal("iron-ingot", "철 주괴", "research", "금속 추출"),
-  minimal("repair-pack", "수리팩", "research", "수리"),
+  minimal("iron-ingot", "철 주괴", "research", "금속 추출", refs("workshop", "광산")),
+  minimal("repair-pack", "수리팩", "research", "수리", refs("workshop", "머신")),
   minimal("electronic-circuit", "전자 회로", "research", "전자"),
   minimal("basic-science-kit", "기초 과학 연구 키트", "research", "금속 가공"),
-  minimal("solar-panel", "태양광 패널", "research", "태양광"),
+  minimal("solar-panel", "태양광 패널", "research", "태양광", refs("workshop", "발전소")),
   minimal("copper-ore", "구리", "workshop", "광산"),
   minimal("iron-ore", "철", "workshop", "광산"),
   minimal("prism-fragment", "프리즘 조각", "workshop", "광산"),

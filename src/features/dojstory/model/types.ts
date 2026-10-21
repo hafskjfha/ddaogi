@@ -41,6 +41,7 @@ export type Mine = WikiEntity & {
 };
 export type Workshop = {
   refs: SourceRef[];
+  itemUses: Evidence<{ itemId: string; section: "machines" | "power" | "mines"; description: string }[]>;
   machineLevels: { level: number; timeReduction: Evidence<number>; tokens: Evidence<number> }[];
   machineCount: Evidence<number>;
   machineExpansion: Evidence<string>;

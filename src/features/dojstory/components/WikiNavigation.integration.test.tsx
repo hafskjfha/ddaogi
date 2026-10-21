@@ -50,3 +50,13 @@ it("showsSourceMarkupAsInertText", async () => {
   expect(container.querySelector("svg")).toBeNull();
   expect(container.querySelector("script")).toBeNull();
 });
+
+it("linksNamedItemsToKnownWorkshopUses", async () => {
+  for (const [slug, section] of [["iron-ingot", "mines"], ["repair-pack", "machines"], ["solar-panel", "power"]]) {
+    render(await ItemPage({ params: Promise.resolve({ slug }) }));
+    const links = screen.getAllByRole("link");
+    expect(links.some((link) => link.getAttribute("href") === `/dojstory/workshop#${section}`)).toBe(true);
+    expect(screen.getByRole("link", { name: "공방 원문" })).toHaveAttribute("href", "/dojstory/sources/workshop");
+    cleanup();
+  }
+});

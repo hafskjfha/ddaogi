@@ -5,6 +5,9 @@ const known = <T>(evidence: Evidence<T>): T | undefined => "value" in evidence ?
 /** Derives both directions from explicit references, never from guessed recipes. */
 export function getWikiRelations(data: WikiDataset, id: string): RelatedLink[] {
   const targets = [
+    { id: "workshop-machines", title: "공방 · 머신", href: "/dojstory/workshop#machines" },
+    { id: "workshop-power", title: "공방 · 발전소", href: "/dojstory/workshop#power" },
+    { id: "workshop-mines", title: "공방 · 광산", href: "/dojstory/workshop#mines" },
     ...data.items.map((entry) => ({ id: entry.id, title: entry.name, href: `/dojstory/items/${entry.slug}` })),
     ...data.research.map((entry) => ({ id: entry.id, title: entry.name, href: `/dojstory/research/${entry.slug}` })),
     ...data.workshop.mines.map((entry) => ({ id: entry.id, title: entry.name, href: `/dojstory/workshop/mines/${entry.slug}` })),
@@ -33,6 +36,11 @@ export function getWikiRelations(data: WikiDataset, id: string): RelatedLink[] {
   for (const mine of data.workshop.mines) {
     if (mine.id === id) { add(mine.outputItemId, "채굴 대상"); add(mine.prerequisiteId, "필수 선행 연구"); }
     if (mine.outputItemId === id) add(mine.id, "채굴하는 광산");
+  }
+  for (const use of known(data.workshop.itemUses) ?? []) {
+    const targetId = `workshop-${use.section}`;
+    if (use.itemId === id) add(targetId, use.description);
+    if (targetId === id) add(use.itemId, use.description);
   }
   for (const guide of data.guides) {
     if (guide.id === id) guide.relatedIds.forEach((targetId) => add(targetId, "관련 항목"));
