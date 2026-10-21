@@ -5,6 +5,9 @@ import { getWikiRelations } from "@/features/dojstory/data/buildWikiRelations";
 import { MineDetails } from "@/features/dojstory/components/MineDetails";
 import { RelatedLinks } from "@/features/dojstory/components/WikiPrimitives";
 
+export const dynamicParams = false;
+export async function generateStaticParams() { return (await loadDojstoryWiki()).workshop.mines.map((mine) => ({ slug: mine.slug })); }
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const slug = (await params).slug;
   const mine = (await loadDojstoryWiki()).workshop.mines.find((mine) => mine.slug === slug);

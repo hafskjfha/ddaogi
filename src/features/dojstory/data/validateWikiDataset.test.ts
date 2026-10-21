@@ -27,6 +27,8 @@ describe("sourced DOJstory dataset", () => {
     expect(sources.find((source) => source.id === "equipment")?.checkedAt.status).toBe("unknown");
     expect(sources.find((source) => source.id === "potential")?.checkedAt.status).toBe("unknown");
     expect(potential.observedOptions[3].amount.status).toBe("unknown");
+    expect(items.find((item) => item.id === "copper-ore")?.name).toBe("구리");
+    expect(items.find((item) => item.id === "iron-ore")?.name).toBe("철");
     expect(validateWikiDataset(dataset)).toEqual([]);
   });
 

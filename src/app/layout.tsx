@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: { default: "따오기", template: "%s · 따오기" },
-  description: "DOJ 유저와 대회를 깊이 읽는 서드파티 분석 서비스",
+  description: "DOJ 유저·대회 분석과 출처로 탐색하는 DOJstory 위키",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -17,5 +17,6 @@ describe("AppHeader", () => {
       "/contests",
     );
     expect(within(navigation).queryByText("준비 중")).not.toBeInTheDocument();
+    expect(within(navigation).getByRole("link", { name: "DOJstory 위키" })).toHaveAttribute("href", "/dojstory");
   });
 });

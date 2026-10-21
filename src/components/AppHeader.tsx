@@ -1,7 +1,7 @@
 import { Bird } from "lucide-react";
 import Link from "next/link";
 
-/** Persistent navigation for the supported user and contest analytics. */
+/** Persistent navigation for user/contest analytics and the sourced DOJstory wiki. */
 export function AppHeader() {
   return (
     <header className="border-b border-slate-200 bg-white/90 text-slate-950 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-50">
@@ -22,6 +22,14 @@ export function AppHeader() {
           >
             <span className="hidden sm:inline">대회 분석</span>
             <span className="sm:hidden">대회</span>
+          </Link>
+          <Link
+            href="/dojstory"
+            aria-label="DOJstory 위키"
+            className="rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-50 dark:focus-visible:ring-slate-300"
+          >
+            <span className="hidden sm:inline">DOJstory 위키</span>
+            <span className="sm:hidden">위키</span>
           </Link>
         </nav>
       </div>

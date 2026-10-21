@@ -5,6 +5,9 @@ import { getWikiRelations } from "@/features/dojstory/data/buildWikiRelations";
 import { GuideContent } from "@/features/dojstory/components/GuideContent";
 import { RelatedLinks } from "@/features/dojstory/components/WikiPrimitives";
 
+export const dynamicParams = false;
+export async function generateStaticParams() { return (await loadDojstoryWiki()).guides.map((guide) => ({ slug: guide.slug })); }
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const slug = (await params).slug;
   const guide = (await loadDojstoryWiki()).guides.find((guide) => guide.slug === slug);

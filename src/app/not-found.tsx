@@ -7,9 +7,15 @@ export default function NotFound() {
       <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">404</p>
       <h1 className="text-3xl font-black tracking-tight">페이지를 찾을 수 없습니다.</h1>
       <p className="text-slate-600 dark:text-slate-400">
-        요청한 유저 또는 대회 분석 페이지는 아직 지원하지 않습니다.
+        요청한 페이지가 현재 지원 범위나 수록 자료에 없습니다.
       </p>
       <div className="flex flex-wrap gap-3">
+        <Link
+          href="/dojstory"
+          className="rounded-lg border border-slate-300 px-4 py-2 font-semibold transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 dark:border-slate-700 dark:hover:bg-slate-900 dark:focus-visible:ring-slate-50 dark:focus-visible:ring-offset-slate-950"
+        >
+          DOJstory 위키 검색
+        </Link>
         <Link
           href="/users/jtw7913"
           className="rounded-lg bg-slate-900 px-4 py-2 font-semibold text-white transition-colors hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 dark:bg-slate-50 dark:text-slate-950 dark:hover:bg-slate-200 dark:focus-visible:ring-slate-50 dark:focus-visible:ring-offset-slate-950"

@@ -1,6 +1,6 @@
 # DOJstory Wiki Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 사용자가 제공한 자료 6개와 정정·보완 자료 1개로 장비·연구 도감과 공방·DLC·강화 가이드를 구현하고, 미확인 정보와 출처를 함께 탐색하게 한다.
 
@@ -10,7 +10,7 @@
 
 **Spec:** [위키 설계](./dojstory-design.md), [자료 요청서](./dojstory-data-request.md), [사용자 정정·보완](./dojstory-data/clarifications.md). 같은 항목은 사용자 보완 자료를 우선하며, 정규 데이터에 원문과 보완 자료의 근거를 함께 연결한다. 이 계획의 범위 결정은 아래 실제 자료에 맞춰 최초 설계를 구체화한다.
 
-작성일: 2026-10-22 KST. 이 문서는 구현 계획이며 아래 체크박스는 아직 실행하지 않았다. 기존 문서와 나란히 관리하기 위해 `docs/dojstory-implementation-plan.md`에 저장한다. 저장소의 기본 `docs/superpowers` 경로는 현재 ignore 대상이다.
+작성일: 2026-10-22 KST. 2026-10-22 KST 구현 및 검증 완료. 아래 체크박스는 실행 결과를 반영한다. 기존 문서와 나란히 관리하기 위해 `docs/dojstory-implementation-plan.md`에 저장한다. 저장소의 기본 `docs/superpowers` 경로는 현재 ignore 대상이다.
 
 ## Global Constraints
 
@@ -121,12 +121,12 @@ type SourceDocument = { id: string; title: string; checkedAt: Evidence<string>; 
 
 **Interfaces:** Produces `WikiDataset`, `WikiItem`, `WikiResearch`, `GuideDocument`, 위 공통 타입; `validateWikiDataset(data: WikiDataset): string[]` — 정상은 빈 오류 목록. 각 데이터 모듈은 같은 이름의 named export를 제공하고, 집계는 Task 2에서 한다.
 
-- [ ] 제공 자료에서 실제 항목을 전사하면서 `preservesCollectedSourceFacts` 테스트를 작성한다. 장비 16개, 연구 12개, 스타포스 행 20개, 관찰 잠재 옵션 15개를 확인한다. 장비 수는 `kind === "equipment"`만 센다. 최소 아이템 수는 고정하지 않는다.
-- [ ] 같은 테스트에서 `basic-doll`의 AI 여부 해당 없음, `basic-processing`의 무료·0초, 광학 분리 I·화학공학의 확인된 빈 효과 목록, 두 연구의 키트 10개 소비를 확인한다. 레벨 4 DOJpower·프로필 반짝임 수치·장비와 잠재 원문 확인일은 계속 미확인이다. `appliesUserClarificationsWithoutGuessingOtherFields`로 정식 이름·오로라 프리즘·조건 구조·XP 정규화와 보완 출처를 검사한다.
-- [ ] `rejectsBrokenReferencesAndDuplicateIdentity`를 작성한다. 실제 전사 항목의 복제본으로 ID·slug 중복과 잘못된 sourceId·연구 참조를 만들면 오류가 반환되어야 한다. 이는 검증용 잘못된 입력이며 게임 샘플로 공개하지 않는다.
-- [ ] 실행: `npm test -- src/features/dojstory/data/validateWikiDataset.test.ts`. 처음에는 모듈 부재 또는 필수 사실 불일치로 FAIL하는지 확인한다.
-- [ ] 타입과 데이터를 구현한다. 참조는 존재하는 항목 또는 출처가 있는 최소 항목만 허용한다. 검증은 출처 누락·ID/slug 중복·끊긴 참조·음수 비용/시간·0~100 밖 확률을 검사한다. 게임에 없는 규칙을 검증식으로 강제하지 않는다.
-- [ ] 위 명령으로 PASS를 확인한 뒤 해당 파일만 커밋한다. 제안 메시지: `feat: add sourced DOJstory wiki dataset`.
+- [x] 제공 자료에서 실제 항목을 전사하면서 `preservesCollectedSourceFacts` 테스트를 작성한다. 장비 16개, 연구 12개, 스타포스 행 20개, 관찰 잠재 옵션 15개를 확인한다. 장비 수는 `kind === "equipment"`만 센다. 최소 아이템 수는 고정하지 않는다.
+- [x] 같은 테스트에서 `basic-doll`의 AI 여부 해당 없음, `basic-processing`의 무료·0초, 광학 분리 I·화학공학의 확인된 빈 효과 목록, 두 연구의 키트 10개 소비를 확인한다. 레벨 4 DOJpower·프로필 반짝임 수치·장비와 잠재 원문 확인일은 계속 미확인이다. `appliesUserClarificationsWithoutGuessingOtherFields`로 정식 이름·오로라 프리즘·조건 구조·XP 정규화와 보완 출처를 검사한다.
+- [x] `rejectsBrokenReferencesAndDuplicateIdentity`를 작성한다. 실제 전사 항목의 복제본으로 ID·slug 중복과 잘못된 sourceId·연구 참조를 만들면 오류가 반환되어야 한다. 이는 검증용 잘못된 입력이며 게임 샘플로 공개하지 않는다.
+- [x] 실행: `npm test -- src/features/dojstory/data/validateWikiDataset.test.ts`. 처음에는 모듈 부재 또는 필수 사실 불일치로 FAIL하는지 확인한다.
+- [x] 타입과 데이터를 구현한다. 참조는 존재하는 항목 또는 출처가 있는 최소 항목만 허용한다. 검증은 출처 누락·ID/slug 중복·끊긴 참조·음수 비용/시간·0~100 밖 확률을 검사한다. 게임에 없는 규칙을 검증식으로 강제하지 않는다.
+- [x] 위 명령으로 PASS를 확인한 뒤 해당 파일만 커밋한다. 제안 메시지: `feat: add sourced DOJstory wiki dataset`.
 
 ## Task 2: 서버 로더와 검색 및 관계 조회
 
@@ -134,12 +134,12 @@ type SourceDocument = { id: string; title: string; checkedAt: Evidence<string>; 
 
 **Interfaces:** Consumes Task 1 타입·데이터·검증 함수. Produces `loadDojstoryWiki(): Promise<WikiDataset>`, `normalizeWikiQuery(raw: Record<string, string | string[] | undefined>): WikiQuery`, `searchWiki(data: WikiDataset, query: WikiQuery): WikiSearchResult[]`, `findWikiItem(data: WikiDataset, slug: string): WikiItem | null`, `findWikiResearch(data: WikiDataset, slug: string): WikiResearch | null`, `getWikiRelations(data: WikiDataset, id: string): RelatedLink[]`.
 
-- [ ] `findsRealEntriesAndKeepsUnknownDistinct`와 `preservesKnownResearchLinks`를 작성한다. `기초가공` 검색이 기초 가공에 도달하고 결정 압축에서 기초 가공 링크를 얻으며, 수리팩 같은 이름만 있는 항목은 최소 항목으로 반환되어야 한다. 존재하지 않는 slug는 null이다.
-- [ ] `normalizesRepeatedAndUnsupportedFilters`를 작성한다. 반복 쿼리는 첫 값 사용, 없는 `q`는 빈 문자열, 지원하지 않는 kind는 `all`, 미지원 slot은 빈 문자열이다. `slot`은 실제 6개 장비 부위의 고정 키만 받는다. 공백·대소문자·유니코드 정규화는 검색에만 적용하고 이름·ID는 바꾸지 않는다.
-- [ ] `failsForInvalidDatasetRatherThanShowingEmptyCatalog`를 작성한다. Task 1 검증 오류가 있으면 로더가 원인을 포함한 오류를 던지고 빈 도감으로 대체하지 않는다.
-- [ ] 실행: `npm test -- src/features/dojstory/data`. 위 신규 테스트의 FAIL을 확인한다.
-- [ ] 로더는 `server-only`로 보호하고 정규 데이터만 집계한다. 검색·관계 함수는 순수 함수로 구현한다. 선행·후속과 아이템 사용처는 명시 참조에서 역산하며, 보이지 않는 연구나 조합법 링크는 생성하지 않는다. 결과 정렬은 이름 오름차순이다.
-- [ ] 위 명령으로 PASS 확인 후 커밋한다. 제안 메시지: `feat: add DOJstory wiki queries and relations`.
+- [x] `findsRealEntriesAndKeepsUnknownDistinct`와 `preservesKnownResearchLinks`를 작성한다. `기초가공` 검색이 기초 가공에 도달하고 결정 압축에서 기초 가공 링크를 얻으며, 수리팩 같은 이름만 있는 항목은 최소 항목으로 반환되어야 한다. 존재하지 않는 slug는 null이다.
+- [x] `normalizesRepeatedAndUnsupportedFilters`를 작성한다. 반복 쿼리는 첫 값 사용, 없는 `q`는 빈 문자열, 지원하지 않는 kind는 `all`, 미지원 slot은 빈 문자열이다. `slot`은 실제 6개 장비 부위의 고정 키만 받는다. 공백·대소문자·유니코드 정규화는 검색에만 적용하고 이름·ID는 바꾸지 않는다.
+- [x] `failsForInvalidDatasetRatherThanShowingEmptyCatalog`를 작성한다. Task 1 검증 오류가 있으면 로더가 원인을 포함한 오류를 던지고 빈 도감으로 대체하지 않는다.
+- [x] 실행: `npm test -- src/features/dojstory/data`. 위 신규 테스트의 FAIL을 확인한다.
+- [x] 로더는 `server-only`로 보호하고 정규 데이터만 집계한다. 검색·관계 함수는 순수 함수로 구현한다. 선행·후속과 아이템 사용처는 명시 참조에서 역산하며, 보이지 않는 연구나 조합법 링크는 생성하지 않는다. 결과 정렬은 이름 오름차순이다.
+- [x] 위 명령으로 PASS 확인 후 커밋한다. 제안 메시지: `feat: add DOJstory wiki queries and relations`.
 
 ## Task 3: 위키 홈과 출처를 읽을 수 있는 공통 화면
 
@@ -147,12 +147,12 @@ type SourceDocument = { id: string; title: string; checkedAt: Evidence<string>; 
 
 **Interfaces:** Consumes Task 2 API. Produces `loadWikiSource(sourceId: string): Promise<SourceDocument | null>`, `EvidenceNotice({ status, note }: { status: Evidence<never>["status"]; note?: string })`, `SourceReferences({ refs }: { refs: SourceRef[] })`. `WikiSearchForm`는 GET 폼이며 `q`, `kind`, `slot`을 제출한다.
 
-- [ ] 홈 테스트 `searchesCollectedDataAndDisclosesPartialCoverage`를 작성한다. 연구·장비 결과, 수록분 표시, 게임 전체 개수라는 표현의 부재, 조합법 메뉴 부재를 확인한다. 검색 없음과 검색 결과 0개도 구분한다.
-- [ ] 출처 테스트 `readsOnlyRegisteredSourcesAsPlainText`를 작성한다. 등록된 원문은 정확한 텍스트를 반환하고 미등록 ID·경로 탈출 문자열은 null이다. 확인일이 없는 원문은 확인일 미확인으로 반환한다.
-- [ ] 실행: `npm test -- src/app/dojstory/page.test.tsx src/features/dojstory/data/loadWikiSource.test.ts`. 신규 테스트 FAIL 확인 후 구현한다.
-- [ ] 출처의 ID→파일 경로는 원문 6개와 보완 자료 1개, 총 7개 고정 허용 목록으로 작성한다. 외부 주소를 요청하거나 입력 ID를 파일 경로에 직접 붙이지 않는다. 출처 페이지는 원문을 `<pre>`의 텍스트 자식으로 표시해 HTML 표·SVG 문자열도 실행하지 않는다. 공개 화면에 로컬 절대 경로를 노출하지 않는다.
-- [ ] Next.js의 `params`·`searchParams`를 await한다. 출처 누락은 `notFound()`, 읽기 실패는 오류 경계로 보낸다. 홈과 상세 화면 모두 `SourceReferences`로 원문 페이지와 외부 근거 링크에 도달할 수 있게 한다.
-- [ ] 빈 도감·없는 문서·읽기 실패·필드 미확인을 다른 문구로 제공한다. 위 명령으로 PASS 확인 후 커밋한다. 제안 메시지: `feat: add DOJstory wiki home and source views`.
+- [x] 홈 테스트 `searchesCollectedDataAndDisclosesPartialCoverage`를 작성한다. 연구·장비 결과, 수록분 표시, 게임 전체 개수라는 표현의 부재, 조합법 메뉴 부재를 확인한다. 검색 없음과 검색 결과 0개도 구분한다.
+- [x] 출처 테스트 `readsOnlyRegisteredSourcesAsPlainText`를 작성한다. 등록된 원문은 정확한 텍스트를 반환하고 미등록 ID·경로 탈출 문자열은 null이다. 확인일이 없는 원문은 확인일 미확인으로 반환한다.
+- [x] 실행: `npm test -- src/app/dojstory/page.test.tsx src/features/dojstory/data/loadWikiSource.test.ts`. 신규 테스트 FAIL 확인 후 구현한다.
+- [x] 출처의 ID→파일 경로는 원문 6개와 보완 자료 1개, 총 7개 고정 허용 목록으로 작성한다. 외부 주소를 요청하거나 입력 ID를 파일 경로에 직접 붙이지 않는다. 출처 페이지는 원문을 `<pre>`의 텍스트 자식으로 표시해 HTML 표·SVG 문자열도 실행하지 않는다. 공개 화면에 로컬 절대 경로를 노출하지 않는다.
+- [x] Next.js의 `params`·`searchParams`를 await한다. 출처 누락은 `notFound()`, 읽기 실패는 오류 경계로 보낸다. 홈과 상세 화면 모두 `SourceReferences`로 원문 페이지와 외부 근거 링크에 도달할 수 있게 한다.
+- [x] 빈 도감·없는 문서·읽기 실패·필드 미확인을 다른 문구로 제공한다. 위 명령으로 PASS 확인 후 커밋한다. 제안 메시지: `feat: add DOJstory wiki home and source views`.
 
 ## Task 4: 장비와 최소 아이템 도감
 
@@ -160,12 +160,12 @@ type SourceDocument = { id: string; title: string; checkedAt: Evidence<string>; 
 
 **Interfaces:** Consumes Task 2 item 조회·검색·관계 API와 Task 3 출처 표시. Produces `ItemCatalog({ items }: { items: WikiItem[] })`, `ItemDetails({ item, related }: { item: WikiItem; related: RelatedLink[] })`, `ItemArtwork({ name, src, slot }: { name: string; src: string | null; slot: string | null })`.
 
-- [ ] `showsRealEquipmentAndUnknownFields`를 작성한다. 기본 의자의 연구·머신 속도 +3%, 금빛 심장을 품은 아이의 요구치 100을 확인한다. 비배경 장비에는 AI 여부 행·배지가 없고 배경에는 자료의 true/false가 표시되어야 한다. 최소 아이템에서 능력치·획득처가 생성되지 않아야 한다.
-- [ ] `filtersEquipmentWithoutHidingNamedMaterials`와 `fallsBackWhenImageFails`를 작성한다. 기본 목록에는 최소 항목도 나오며 부위 필터는 장비만 추린다. 외부 이미지 오류 후 이름·기본 표시와 상세 링크가 유지되어야 한다.
-- [ ] 실행: `npm test -- src/features/dojstory/components/Item`. 신규 테스트 FAIL 확인 후 구현한다.
-- [ ] 장비명·기본 옵션·경매 여부·요구 DOJpower·스타포스 설명을 자료대로 제공한다. AI 여부는 배경에만 표시한다. `+n%`를 단계별 확정 수치로 바꾸지 않는다. 아이템에 관련된 연구·강화·잠재 가이드만 연결한다. 추가 이미지 확보를 기다리지 않는다.
-- [ ] `ItemArtwork`만 클라이언트 컴포넌트로 만든다. 제공 SVG는 정적 도형으로 저장한다. 원격 이미지는 `next/image`와 `https://doj.kr/api/storage-assets/**`에 한정한 `remotePatterns`, `fill`·`sizes`를 사용한다. 실패·이미지 부재 시 기본 표시를 사용한다.
-- [ ] 위 테스트 PASS 후 커밋한다. 제안 메시지: `feat: add sourced DOJstory item catalog`.
+- [x] `showsRealEquipmentAndUnknownFields`를 작성한다. 기본 의자의 연구·머신 속도 +3%, 금빛 심장을 품은 아이의 요구치 100을 확인한다. 비배경 장비에는 AI 여부 행·배지가 없고 배경에는 자료의 true/false가 표시되어야 한다. 최소 아이템에서 능력치·획득처가 생성되지 않아야 한다.
+- [x] `filtersEquipmentWithoutHidingNamedMaterials`와 `fallsBackWhenImageFails`를 작성한다. 기본 목록에는 최소 항목도 나오며 부위 필터는 장비만 추린다. 외부 이미지 오류 후 이름·기본 표시와 상세 링크가 유지되어야 한다.
+- [x] 실행: `npm test -- src/features/dojstory/components/Item`. 신규 테스트 FAIL 확인 후 구현한다.
+- [x] 장비명·기본 옵션·경매 여부·요구 DOJpower·스타포스 설명을 자료대로 제공한다. AI 여부는 배경에만 표시한다. `+n%`를 단계별 확정 수치로 바꾸지 않는다. 아이템에 관련된 연구·강화·잠재 가이드만 연결한다. 추가 이미지 확보를 기다리지 않는다.
+- [x] `ItemArtwork`만 클라이언트 컴포넌트로 만든다. 제공 SVG는 정적 도형으로 저장한다. 원격 이미지는 `next/image`와 `https://doj.kr/api/storage-assets/**`에 한정한 `remotePatterns`, `fill`·`sizes`를 사용한다. 실패·이미지 부재 시 기본 표시를 사용한다.
+- [x] 위 테스트 PASS 후 커밋한다. 제안 메시지: `feat: add sourced DOJstory item catalog`.
 
 ## Task 5: 연구 도감과 선행 및 후속 탐색
 
@@ -173,11 +173,11 @@ type SourceDocument = { id: string; title: string; checkedAt: Evidence<string>; 
 
 **Interfaces:** Consumes Task 2 research API와 관계, Task 3 출처 표시. Produces `ResearchCatalog({ research }: { research: WikiResearch[] })`, `ResearchDetails({ research, related }: { research: WikiResearch; related: RelatedLink[] })`.
 
-- [ ] `keepsAccessAlternativeSeparateFromPrerequisites`를 작성한다. 결정 압축에 필수 선행 기초 가공, DOJpower 50 이상 또는 가치의 증표 착용, 무료, 30분을 각각 표시한다. 오로라 합성의 선행 연구 결정 압축·광학 분리 I는 모두 필수이며, 가치의 증표 착용으로 선행 연구가 생략되는 표현이 없어야 한다. 자료 수집 계정의 219.99로 해금 가능 여부를 단정하는 배지도 없어야 한다.
-- [ ] `appliesCorrectedEffectsAndConsumedMaterials`를 작성한다. 오로라 합성에 오로라 프리즘 제작법 해금·별도 조합법 획득 필요가 표시되고, 결정 압축에도 별도 제작법 획득 필요가 남는다. 광학 분리 I·화학공학은 효과 없음으로 표시하고, 화학공학·광학 분리 II 각각의 비용에 기초 과학 연구 키트 10개가 포함되어야 한다.
-- [ ] 실행: `npm test -- src/features/dojstory/components/ResearchDetails.test.tsx`. FAIL 확인 후 구현한다.
-- [ ] 현재 확보 연구 12개와 선행·후속 링크를 제공한다. 모든 선행 연구를 필수로 묶고, 별도의 DOJpower 또는 가치의 증표 착용 조건도 충족해야 함을 표시한다. 연구 키트 10개는 소비 재료로서 토큰과 별도 비용 항목에 포함한다.
-- [ ] PASS 확인 후 커밋한다. 제안 메시지: `feat: add DOJstory process research catalog`.
+- [x] `keepsAccessAlternativeSeparateFromPrerequisites`를 작성한다. 결정 압축에 필수 선행 기초 가공, DOJpower 50 이상 또는 가치의 증표 착용, 무료, 30분을 각각 표시한다. 오로라 합성의 선행 연구 결정 압축·광학 분리 I는 모두 필수이며, 가치의 증표 착용으로 선행 연구가 생략되는 표현이 없어야 한다. 자료 수집 계정의 219.99로 해금 가능 여부를 단정하는 배지도 없어야 한다.
+- [x] `appliesCorrectedEffectsAndConsumedMaterials`를 작성한다. 오로라 합성에 오로라 프리즘 제작법 해금·별도 조합법 획득 필요가 표시되고, 결정 압축에도 별도 제작법 획득 필요가 남는다. 광학 분리 I·화학공학은 효과 없음으로 표시하고, 화학공학·광학 분리 II 각각의 비용에 기초 과학 연구 키트 10개가 포함되어야 한다.
+- [x] 실행: `npm test -- src/features/dojstory/components/ResearchDetails.test.tsx`. FAIL 확인 후 구현한다.
+- [x] 현재 확보 연구 12개와 선행·후속 링크를 제공한다. 모든 선행 연구를 필수로 묶고, 별도의 DOJpower 또는 가치의 증표 착용 조건도 충족해야 함을 표시한다. 연구 키트 10개는 소비 재료로서 토큰과 별도 비용 항목에 포함한다.
+- [x] PASS 확인 후 커밋한다. 제안 메시지: `feat: add DOJstory process research catalog`.
 
 ## Task 6: 공방과 광산 및 설명형 가이드
 
@@ -185,12 +185,12 @@ type SourceDocument = { id: string; title: string; checkedAt: Evidence<string>; 
 
 **Interfaces:** Consumes Task 1 `WikiDataset["workshop"]`, `GuideDocument`와 Task 3 출처 표시. Produces `WorkshopOverview({ workshop }: { workshop: WikiDataset["workshop"] })`, `MineDetails({ mine }: { mine: WikiDataset["workshop"]["mines"][number] })`, `GuideContent({ guide }: { guide: GuideDocument })`.
 
-- [ ] `showsWorkshopFactsWithoutProductionSimulation`을 작성한다. 머신 내구도 최대 100·수리팩 회복 20·내구도 0 제작시간 2배·기본 발전량 200kW를 확인한다. 태양광 추가 발전량은 미확인이고 전력 부족 배율은 생성되지 않아야 한다.
-- [ ] `normalizesMineExperienceAndKeepsUnknownValues`를 작성한다. 구리·철·프리즘 3종과 출처의 시간을 표시하고 레벨 2 비용·필요 경험치는 미확인이다. 기존 레벨 1의 900·레벨 3의 3600은 XP로 표시하고 채굴당 XP와 같은 단위로 관리한다. 개인 효과 여부와 연속 해결 조건의 불확실성도 보존한다.
-- [ ] `rendersEnhancementTablesWithoutCompletingMissingValues`를 작성한다. 스타포스 10→11 비용 6,798·성공 55%·실패 중 하락 8%와 실제 하락 3.6%·유지 41.4%의 설명을 확인한다. 조건부 확률에 충돌·확인 필요 표시가 없어야 한다. 잠재 등급 상승 12/6/2/0%, 2→최대 4줄, 관찰 옵션 15개를 확인한다. 광산·잠재·DLC의 `?` 값이 0이나 보간값이 되지 않아야 한다.
-- [ ] 실행: `npm test -- src/features/dojstory/components/WorkshopOverview.test.tsx src/features/dojstory/components/MineDetails.test.tsx src/features/dojstory/components/GuideContent.test.tsx`. FAIL 확인 후 구현한다.
-- [ ] 구조화된 표와 문단으로 4개 가이드를 작성한다. 스타포스의 기본 확률·최대 단계와 잠재 규칙은 원문 조건을 붙여 표시한다. DLC의 비례·시간 감점 설명은 추정 라벨을 동반한다. 승급시험 보너스 `10 × 성공 개수`는 원문 기재 설명으로 제공하고 자동 계산하지 않는다.
-- [ ] 반복 가능한 공장이나 조합법 데이터가 있는 것처럼 표시하지 않는다. 단순 공방 탭·광산 상세 링크로 탐색을 제공한다. 긴 표의 모바일 가독성을 확인하고 PASS 후 커밋한다. 제안 메시지: `feat: add DOJstory workshop and enhancement guides`.
+- [x] `showsWorkshopFactsWithoutProductionSimulation`을 작성한다. 머신 내구도 최대 100·수리팩 회복 20·내구도 0 제작시간 2배·기본 발전량 200kW를 확인한다. 태양광 추가 발전량은 미확인이고 전력 부족 배율은 생성되지 않아야 한다.
+- [x] `normalizesMineExperienceAndKeepsUnknownValues`를 작성한다. 구리·철·프리즘 3종과 출처의 시간을 표시하고 레벨 2 비용·필요 경험치는 미확인이다. 기존 레벨 1의 900·레벨 3의 3600은 XP로 표시하고 채굴당 XP와 같은 단위로 관리한다. 개인 효과 여부와 연속 해결 조건의 불확실성도 보존한다.
+- [x] `rendersEnhancementTablesWithoutCompletingMissingValues`를 작성한다. 스타포스 10→11 비용 6,798·성공 55%·실패 중 하락 8%와 실제 하락 3.6%·유지 41.4%의 설명을 확인한다. 조건부 확률에 충돌·확인 필요 표시가 없어야 한다. 잠재 등급 상승 12/6/2/0%, 2→최대 4줄, 관찰 옵션 15개를 확인한다. 광산·잠재·DLC의 `?` 값이 0이나 보간값이 되지 않아야 한다.
+- [x] 실행: `npm test -- src/features/dojstory/components/WorkshopOverview.test.tsx src/features/dojstory/components/MineDetails.test.tsx src/features/dojstory/components/GuideContent.test.tsx`. FAIL 확인 후 구현한다.
+- [x] 구조화된 표와 문단으로 4개 가이드를 작성한다. 스타포스의 기본 확률·최대 단계와 잠재 규칙은 원문 조건을 붙여 표시한다. DLC의 비례·시간 감점 설명은 추정 라벨을 동반한다. 승급시험 보너스 `10 × 성공 개수`는 원문 기재 설명으로 제공하고 자동 계산하지 않는다.
+- [x] 반복 가능한 공장이나 조합법 데이터가 있는 것처럼 표시하지 않는다. 단순 공방 탭·광산 상세 링크로 탐색을 제공한다. 긴 표의 모바일 가독성을 확인하고 PASS 후 커밋한다. 제안 메시지: `feat: add DOJstory workshop and enhancement guides`.
 
 ## Task 7: 기존 서비스 연결과 전체 검증
 
@@ -198,13 +198,13 @@ type SourceDocument = { id: string; title: string; checkedAt: Evidence<string>; 
 
 **Interfaces:** Consumes Tasks 1–6. 새로운 데이터 API는 추가하지 않는다. 기존 유저·대회 진입 주소를 유지하고 DOJstory 진입만 추가한다.
 
-- [ ] 기존 헤더·홈 테스트에 DOJstory `/dojstory` 링크와 기능 카드를 추가하고 기존 유저·대회 링크 검증은 유지한다. 기존 홈의 `2026.08.11 오전 2시`가 분석 데이터 기준임을 분명히 한다. 위키 전체가 그 날짜 기준이라고 표시하지 않는다.
-- [ ] 통합 테스트 `navigatesCollectedResearchAndItems`를 작성한다. 실제 조회 함수와 데이터로 기초 가공 → 결정 압축 → 베이직 프리즘 최소 항목의 href, 후속·출처 링크를 검증한다. 레시피 상세로 이어지는 가짜 링크가 없어야 한다.
-- [ ] 통합 테스트 `handlesUnknownSlugsAndSourceFailure`를 작성한다. 없는 item/research/mine/guide/source slug는 404, 로더 실패는 오류 화면, 검색 결과 0개는 정상 빈 결과다. Next.js 프레임워크 함수만 필요한 범위에서 모킹하고 실제 데이터·관계 로직을 대신 만들지 않는다.
-- [ ] 실행: `npm test -- src/components/AppHeader.test.tsx src/app/page.test.tsx src/features/dojstory/components/WikiNavigation.integration.test.tsx`. 신규 기대가 FAIL하는지 확인 후 연결·메타데이터·README를 구현한다.
-- [ ] 개발 서버에서 375px·데스크톱 너비, 키보드만 사용하는 탐색, 검색 URL 복사·새로고침, 외부 이미지 실패, 각 상세 진입, 기존 유저·대회 화면을 확인한다. 컴포넌트 통합 테스트는 실제 브라우저 검증을 대체하지 않는다.
-- [ ] 차례로 `npm test`, `npm run lint`, `npx next typegen`, `npx tsc --noEmit`, `npm run build`를 실행한다. 새 App Router 경로의 `PageProps`를 생성하기 위해 typegen을 타입 검사보다 먼저 한다. 모든 검사 성공과 위 수동 확인 결과를 기록한다.
-- [ ] 수정한 파일만 커밋한다. 제안 메시지: `feat: integrate DOJstory wiki navigation and docs`. 기존에 미추적 상태였던 사용자 자료는 전체 스테이징하지 말고, 포함할 원문 6개와 보완 자료 1개를 명시적으로 확인해 필요한 시점에만 함께 커밋한다.
+- [x] 기존 헤더·홈 테스트에 DOJstory `/dojstory` 링크와 기능 카드를 추가하고 기존 유저·대회 링크 검증은 유지한다. 기존 홈의 `2026.08.11 오전 2시`가 분석 데이터 기준임을 분명히 한다. 위키 전체가 그 날짜 기준이라고 표시하지 않는다.
+- [x] 통합 테스트 `navigatesCollectedResearchAndItems`를 작성한다. 실제 조회 함수와 데이터로 기초 가공 → 결정 압축 → 베이직 프리즘 최소 항목의 href, 후속·출처 링크를 검증한다. 레시피 상세로 이어지는 가짜 링크가 없어야 한다.
+- [x] 통합 테스트 `handlesUnknownSlugsAndSourceFailure`를 작성한다. 없는 item/research/mine/guide/source slug는 404, 로더 실패는 오류 화면, 검색 결과 0개는 정상 빈 결과다. Next.js 프레임워크 함수만 필요한 범위에서 모킹하고 실제 데이터·관계 로직을 대신 만들지 않는다.
+- [x] 실행: `npm test -- src/components/AppHeader.test.tsx src/app/page.test.tsx src/features/dojstory/components/WikiNavigation.integration.test.tsx`. 신규 기대가 FAIL하는지 확인 후 연결·메타데이터·README를 구현한다.
+- [x] 개발 서버에서 375px·데스크톱 너비, 키보드만 사용하는 탐색, 검색 URL 복사·새로고침, 외부 이미지 실패, 각 상세 진입, 기존 유저·대회 화면을 확인한다. 컴포넌트 통합 테스트는 실제 브라우저 검증을 대체하지 않는다.
+- [x] 차례로 `npm test`, `npm run lint`, `npx next typegen`, `npx tsc --noEmit`, `npm run build`를 실행한다. 새 App Router 경로의 `PageProps`를 생성하기 위해 typegen을 타입 검사보다 먼저 한다. 모든 검사 성공과 위 수동 확인 결과를 기록한다.
+- [x] 수정한 파일만 커밋한다. 제안 메시지: `feat: integrate DOJstory wiki navigation and docs`. 기존에 미추적 상태였던 사용자 자료는 전체 스테이징하지 말고, 포함할 원문 6개와 보완 자료 1개를 명시적으로 확인해 필요한 시점에만 함께 커밋한다.
 
 ## 완료 조건과 후속 자료
 
@@ -222,3 +222,14 @@ type SourceDocument = { id: string; title: string; checkedAt: Evidence<string>; 
 ## 자체 검토 결과
 
 최초 설계의 아이템·연구·출처·공방·설명형 가이드는 Tasks 1–7에 배정했다. 조합법 도감·변경 기록·개인 연동·계산기는 현재 자료 범위에 맞춰 명시적으로 보류했다. Review Focus의 5개 항목은 각 소유 Task의 검증 단계에 연결했고, 함수명과 타입은 공통 인터페이스에 맞췄다. 사용자 보완에 따라 정규화 결정·화면 요구·검증 기대·후속 요청 목록을 함께 갱신했다. 구현 코드와 기존 원문 6개는 변경하지 않았다.
+
+## 구현·검증 결과 (2026-10-22 KST)
+
+- Tasks 1–7 구현. 기존 원문 6개와 보완 자료 1개는 그대로 보존했다.
+- 전체 테스트 50개 파일, 232개 통과. `npm run lint`, `npx next typegen`, `npx tsc --noEmit`, `npm run build` 통과.
+- 배포 서버에서 `scripts/check-dojstory-routes.mjs`로 정상 화면 13개, 미등록 상세 5종의 HTTP 404, 빈 검색의 정상 200 응답을 확인했다.
+- 브라우저에서 1365px·375px, 별칭 검색·GET URL 새로고침, 키보드 연구→아이템→원문 탐색, 광산·강화 표의 내부 가로 스크롤, 장비·연구·공방·광산·가이드·출처 화면, 기존 유저·대회 분석 진입을 확인했다.
+- 실제 ItemArtwork를 사용하는 임시 개발용 검증 화면에서 원격 이미지 실패 시 이름·기본 표시·상세 링크가 유지됨을 확인한 뒤 검증 화면을 제거했다.
+- 브라우저 검증에서 광산 표가 페이지 전체 너비를 늘리는 문제를 발견해 grid의 최소 너비를 수정했다.
+- 상세는 로컬 수록 항목을 빌드 시 생성하고 미등록 경로는 실제 HTTP 404를 반환하도록 구성했다. 새 항목을 추가할 때 다시 빌드한다. 공통 404 화면에는 위키 검색 진입을 추가했다.
+- 변경은 `codex/dojstory-wiki` 작업 브랜치에 기록한다.

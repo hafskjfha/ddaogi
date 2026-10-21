@@ -1,4 +1,4 @@
-import { ArrowRight, Bird, CircleAlert, Trophy, UserRoundSearch } from "lucide-react";
+import { ArrowRight, Bird, BookOpen, CircleAlert, Trophy, UserRoundSearch } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/Card";
 
@@ -7,7 +7,7 @@ const CONTEST_DEMO_HREF = "/contests/doj-beginner-contest-4";
 const USER_INDEX_HREF = "/users";
 const CONTEST_INDEX_HREF = "/contests";
 
-/** Introduces Ddaogi and routes visitors to the available analytics demos. */
+/** Introduces analytics demos and the source-backed DOJstory wiki. */
 export default function Home() {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
@@ -20,7 +20,7 @@ export default function Home() {
           <div className="space-y-3">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">DOJ의 기록을 한곳에 따오기</h1>
             <p className="max-w-2xl text-lg text-slate-600 dark:text-slate-400">
-              유저의 성장 과정과 대회의 결과를 한눈에 살펴보세요.
+              유저의 성장 과정과 대회의 결과, DOJstory 정보를 함께 살펴보세요.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -49,11 +49,12 @@ export default function Home() {
             </div>
           </CardHeader>
           <CardContent className="text-sm text-amber-900 dark:text-amber-200">
-            데이터 기준은 2026.08.11 오전 2시이며 실시간 데이터가 아닙니다.
+            유저·대회 분석 데이터 기준은 2026.08.11 오전 2시이며 실시간 데이터가 아닙니다.
+            DOJstory 위키는 각 문서의 자료 확인일을 별도로 표시합니다.
           </CardContent>
         </Card>
       </section>
-      <section className="grid gap-4 md:grid-cols-2" aria-label="분석 기능">
+      <section className="grid gap-4 md:grid-cols-3" aria-label="분석과 위키 기능">
         <Link
           href={USER_INDEX_HREF}
           aria-label="유저 분석 페이지로 이동"
@@ -77,6 +78,19 @@ export default function Home() {
               <Trophy aria-hidden="true" className="size-5 text-blue-600 dark:text-blue-400" />
               <h2 className="text-lg font-semibold leading-none tracking-tight">대회 분석</h2>
               <CardDescription>참가자 레이팅 분포와 문제별 결과를 비교합니다.</CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+        <Link
+          href="/dojstory"
+          aria-label="DOJstory 위키 페이지로 이동"
+          className="group rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 dark:focus-visible:ring-slate-300 dark:focus-visible:ring-offset-slate-950"
+        >
+          <Card className="h-full transition-all group-hover:-translate-y-0.5 group-hover:border-blue-300 group-hover:shadow-md dark:group-hover:border-blue-800">
+            <CardHeader>
+              <BookOpen aria-hidden="true" className="size-5 text-blue-600 dark:text-blue-400" />
+              <h2 className="text-lg font-semibold leading-none tracking-tight">DOJstory 위키</h2>
+              <CardDescription>장비, 연구와 공방의 조건·정보를 원문과 함께 탐색합니다.</CardDescription>
             </CardHeader>
           </Card>
         </Link>

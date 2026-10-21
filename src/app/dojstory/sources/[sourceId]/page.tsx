@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { loadWikiSource } from "@/features/dojstory/data/loadWikiSource";
 import { CheckedAt } from "@/features/dojstory/components/WikiPrimitives";
+import { sources } from "../../../../../data/dojstory/sources";
+
+export const dynamicParams = false;
+export function generateStaticParams() { return sources.map((source) => ({ sourceId: source.id })); }
 
 export async function generateMetadata({ params }: { params: Promise<{ sourceId: string }> }): Promise<Metadata> {
   const source = await loadWikiSource((await params).sourceId);

@@ -10,6 +10,7 @@ describe("Home", () => {
     expect(screen.getByText(/DOJ에서 운영하는 공식 사이트가 아닌/)).toBeInTheDocument();
     expect(screen.getByText(/2026\.08\.11 오전 2시/)).toBeInTheDocument();
     expect(screen.getByText(/실시간 데이터가 아닙니다/)).toBeInTheDocument();
+    expect(screen.getByText(/유저·대회 분석 데이터 기준/)).toBeInTheDocument();
 
     for (const name of ["이용 전 확인해 주세요", "유저 분석", "대회 분석"]) {
       expect(screen.getByRole("heading", { name, level: 2 })).toBeInTheDocument();
@@ -35,6 +36,7 @@ describe("Home", () => {
     for (const [name, href] of [
       ["유저 분석 페이지로 이동", "/users"],
       ["대회 분석 페이지로 이동", "/contests"],
+      ["DOJstory 위키 페이지로 이동", "/dojstory"],
     ]) {
       const link = screen.getByRole("link", { name });
 
