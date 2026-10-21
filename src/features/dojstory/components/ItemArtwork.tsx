@@ -7,8 +7,24 @@ import { useState } from "react";
 /** Keeps the name and neutral placeholder visible when artwork is absent or fails. */
 export function ItemArtwork({ name, src, slot }: { name: string; src: string | null; slot: string | null }) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const [dimensions, setDimensions] = useState<{ src: string; ratio: string } | null>(null);
   const failed = Boolean(src && failedSrc === src);
-  return <div className="wiki-artwork">
-    {src && !failed ? <Image src={src} alt={name} fill sizes="(max-width: 767px) 90vw, 400px" style={{ objectFit: slot === "background" ? "cover" : "contain" }} onError={() => setFailedSrc(src)} /> : <div className="wiki-artwork-fallback"><PackageOpen aria-hidden="true" size={28} /><span>{name}</span><span>{failed ? "이미지를 불러오지 못했습니다" : "이미지 미확보"}</span></div>}
+  const background = slot === "background" && src && !failed;
+  return <div
+    className={`wiki-artwork${background ? " wiki-artwork-background" : ""}`}
+    style={background && dimensions?.src === src ? { aspectRatio: dimensions.ratio } : undefined}
+  >
+    {src && !failed ? <Image
+      src={src}
+      alt={name}
+      fill
+      sizes="(max-width: 767px) 90vw, 600px"
+      style={{ objectFit: "contain" }}
+      onLoad={(event) => {
+        const image = event.currentTarget;
+        if (image.naturalWidth && image.naturalHeight) setDimensions({ src, ratio: `${image.naturalWidth} / ${image.naturalHeight}` });
+      }}
+      onError={() => setFailedSrc(src)}
+    /> : <div className="wiki-artwork-fallback"><PackageOpen aria-hidden="true" size={28} /><span>{name}</span><span>{failed ? "이미지를 불러오지 못했습니다" : "이미지 미확보"}</span></div>}
   </div>;
 }

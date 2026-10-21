@@ -15,10 +15,12 @@ it("showsRealEquipmentAndUnknownFields", () => {
   cleanup();
   render(<ItemDetails item={items.find((item) => item.slug === "doj-grand-contest-1")!} related={[]} />);
   expect(screen.getByText("AI 여부")).toBeInTheDocument();
-  expect(screen.getByText("예 (true)")).toBeInTheDocument();
+  expect(screen.getByText("예")).toBeInTheDocument();
+  expect(screen.queryByText(/\(true\)/)).not.toBeInTheDocument();
   cleanup();
   render(<ItemDetails item={items.find((item) => item.slug === "sjupc-2026")!} related={[]} />);
-  expect(screen.getByText("아니요 (false)")).toBeInTheDocument();
+  expect(screen.getByText("아니요")).toBeInTheDocument();
+  expect(screen.queryByText(/\(false\)/)).not.toBeInTheDocument();
 });
 
 it("doesNotInventStatsForNamedEntries", () => {

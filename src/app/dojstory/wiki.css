@@ -50,8 +50,27 @@
 .wiki-facts dt { font-size: .85rem; color: #64748b; }
 .wiki-facts dd { font-size: .9rem; overflow-wrap: anywhere; }
 .wiki-artwork { position: relative; min-height: 10rem; border-radius: .75rem; overflow: hidden; background: var(--wiki-soft); display: grid; place-items: center; padding: 1.5rem; text-align: center; }
+.wiki-artwork-background { min-height: 0; aspect-ratio: 3 / 1; padding: 0; }
+.wiki-artwork-panel { align-self: start; }
 .wiki-artwork-fallback { display: grid; gap: .4rem; justify-items: center; color: #64748b; font-size: .85rem; }
 .wiki-prose { display: grid; gap: 1rem; }
 .wiki-prose ul { padding-left: 1.3rem; list-style: disc; line-height: 1.9; }
+.research-graph { min-width: 0; }
+.research-graph-search { font-size: .85rem; color: var(--wiki-accent); }
+.research-graph-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 1rem; background: var(--card); margin-block: 1rem; }
+.research-graph svg { display: block; width: 100%; height: auto; }
+.research-graph-edge path { fill: none; stroke: var(--wiki-accent); stroke-width: 1.6; stroke-linejoin: round; opacity: .75; }
+.research-graph-arrow { fill: var(--wiki-accent); }
+.research-graph-edge[data-tentative=true] path { stroke-dasharray: 5 4; }
+.research-graph-node rect { fill: var(--wiki-soft); stroke: var(--border); stroke-width: 1.5; }
+.research-graph-name { fill: var(--foreground); font-size: 15px; font-weight: 650; }
+.research-graph-subtitle { fill: #64748b; font-size: 11px; }
+.research-graph-go { fill: var(--wiki-accent); font-size: 15px; }
+.research-graph-node[data-unknown=true] rect { stroke-dasharray: 5 4; }
+.research-graph-node[data-match=false],.research-graph-edge[data-match=false] { opacity: .35; }
+.research-graph-node:is(:hover,:focus-visible) { opacity: 1; outline: none; }
+.research-graph-node:is(:hover,:focus-visible) rect { stroke: var(--wiki-accent); stroke-width: 3; }
+.research-graph-edge:hover path { stroke-width: 3; opacity: 1; }
+@media(prefers-color-scheme:dark) { .research-graph-subtitle { fill: #94a3b8; } }
 @media(min-width:768px) { .wiki-detail-grid { grid-template-columns: minmax(0,1.3fr) minmax(0,1fr); } }
 @media(prefers-color-scheme:dark) { .wiki { --wiki-accent:#7dd3fc; --wiki-soft:#0c1c2f; } .wiki-muted,.wiki caption,.wiki-hero > p,.wiki-facts dt { color:#94a3b8; } .wiki-evidence { background:#1e293b; color:#cbd5e1; } .wiki-evidence-unknown,.wiki-evidence-tentative,.wiki-evidence-conflict { background:#422006; color:#fde68a; } }
